@@ -24,12 +24,12 @@ export abstract class NodeType extends BaseType {
         this.type = type;
     }
 
-    public onPrevAction(action: ActionType): boolean {
-        return true;
+    public onNextAction(actionId: string): Promise<any> | Promise<undefined> {
+        return Promise.resolve(undefined);
     }
 
-    public onNextAction(action: ActionType): boolean {
-        return true;
+    public onPrevAction(actionId: string, data?: any): Promise<void> {
+        return Promise.resolve();
     }
 
     // public abstract save(): void;
