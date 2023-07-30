@@ -1,6 +1,8 @@
 import { createServer, IncomingMessage, ServerResponse } from 'node:http'
 import axios from 'axios'
 
+console.log('Hello World!');
+
 console.log(`ENV = ${process.env.ENV}`);
 console.log(`Terminal = ${process.env.Terminal}`);
 console.log(`Address = ${process.env.Address}`)

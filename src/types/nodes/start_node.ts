@@ -6,7 +6,11 @@ export default class StartNode extends NodeType {
         super("NODE_START");
     }
 
-    public override onPrevAction(action: ActionType): boolean {
-        return false;
+    protected override initNextActions(): void {
+        this.nextActions.push('ACTION_OK');
     }
+
+    // public override onPrevAction(action: ActionType): boolean {
+    //     return false;
+    // }
 }

@@ -6,7 +6,7 @@ export default class EndNode extends NodeType {
         super("NODE_END");
     }
 
-    public override onNextAction(action: ActionType): boolean {
-        return false;
-    }
+    // public override onNextAction(action: ActionType): boolean {
+    //     return false;
+    // }
 }

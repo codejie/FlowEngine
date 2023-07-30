@@ -1,4 +1,4 @@
-import FlowType, * as Flow from '../src/types/flow';
+import FlowType, * as Flow from '../src/types/flows/flow';
 import * as Load from './load_node_action';
 
 
@@ -11,8 +11,13 @@ const actionIndex = flow.addAction('ACTION_OK');
 try {
     flow.attachAction(Flow.AttachPosition.NEXT, startIndex, actionIndex);
     flow.attachAction(Flow.AttachPosition.PREV, endIndex, actionIndex);
-
-    flow.show();
+    flow.attachAction(Flow.AttachPosition.PREV, endIndex, actionIndex);
+    
+    flow.onActionTriggered(actionIndex)
+        .then(() => {
+            flow.show();
+        });
+    // flow.show();
 } catch (error) {
     console.log(error);
 }

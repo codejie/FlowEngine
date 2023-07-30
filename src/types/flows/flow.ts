@@ -1,6 +1,6 @@
-import { ActionType } from "./actions/action"
-import { BaseType } from "./base"
-import { NodeType } from "./nodes/node"
+import { ActionType } from "../actions/action"
+import { BaseType } from "../base"
+import { NodeType } from "../nodes/node"
 
 // interface Action {
 //     index: number,
@@ -15,7 +15,9 @@ import { NodeType } from "./nodes/node"
 // }
 
 enum NodeState {
-    INIT = 0
+    INIT = 0,
+    PASSED = 1,
+    ACTIVED = 2
 }
 
 enum ActionState {
@@ -35,8 +37,8 @@ interface NodeIndexes {
 interface ActionIndexes {
     [key: number]: {
         id: string,
-        prevNode?: number, // index
-        nextNode?: number,
+        prevNode: number | undefined, // index
+        nextNode: number[],
         state: ActionState
     }
 }
@@ -61,8 +63,8 @@ export interface TraverseAction {
     name?: string,
     description?: string,
 
-    prevNode?: number,
-    nextNode?: number
+    prevNode: number | undefined,
+    nextNode: number[]
 }
 
 export interface TraverseResult {
@@ -76,7 +78,7 @@ export default class FlowType extends BaseType {
     private nodes: NodeIndexes = {};
     private actions: ActionIndexes = {};
 
-    private currentNode: number = 0;
+    // private currentNode: number = 0;
 
     public addNode(node: NodeType): number;
     public addNode(id: string): number;
@@ -98,6 +100,8 @@ export default class FlowType extends BaseType {
     public addAction(id: string): number {
         this.actions[++ this.index] = {
             id,
+            prevNode: undefined,
+            nextNode: [],
             state: ActionState.INIT
         }
         return this.index;
@@ -111,7 +115,8 @@ export default class FlowType extends BaseType {
                 break;
             case AttachPosition.PREV:
                 this.nodes[node].prevActions.push(action);
-                this.actions[action].nextNode = node;
+                if (this.actions[action].nextNode.indexOf(node) === -1)
+                    this.actions[action].nextNode.push(node);
                 break;
             default:
                 throw new Error(`unkonwn position - ${position}`);
@@ -125,8 +130,8 @@ export default class FlowType extends BaseType {
                 this.actions[action].prevNode = undefined;
                 break;
             case AttachPosition.PREV:
-                this.nodes[node].prevActions.splice(this.nodes[node].prevActions.indexOf(action, 1));
-                this.actions[action].nextNode = undefined;
+                this.nodes[node].prevActions.splice(this.nodes[node].prevActions.indexOf(action), 1);
+                this.actions[action].nextNode.splice(this.actions[action].nextNode.indexOf(node), 1);
                 break;
             default:
                 throw new Error(`unkonwn position - ${position}`);
@@ -166,10 +171,17 @@ export default class FlowType extends BaseType {
     }
 
     public show(): void {
-        function showNode(nodes: NodeIndexes, index?: number): string {
+        function showNode(nodes: NodeIndexes, index?: number | number[]): string {
             if (index) {
-                const node = nodes[index];
-                return `[${index}](${node.node.id})`;
+                if (index instanceof Array) {
+                    let ret = '';
+                    index.forEach(node => {
+                        ret += `[${nodes[node].state === NodeState.INIT ? '' : '*' }${node}](${nodes[node].node.id})|`
+                    })
+                    return ret;
+                } else {
+                    return `[${nodes[index].state === NodeState.INIT ? '' : '*' }${index}](${nodes[index].node.id})`;
+                }
             } else {
                 return '[]()';
             }
@@ -187,16 +199,23 @@ export default class FlowType extends BaseType {
         }
     }
 
-    public async onActionTriggered(index: number): Promise<boolean> {
+    public async onActionTriggered(index: number): Promise<void> {
         const action = this.actions[index];
         if (!action.prevNode || !action.nextNode) {
             throw new Error('action missing node.');
         }
         const prevNode = this.nodes[action.prevNode];
         const preRet = await prevNode.node.onNextAction(action.id);
-        const nextNode = this.nodes[action.nextNode];
-        await nextNode.node.onPrevAction(action.id, preRet);
+        prevNode.state = NodeState.PASSED;
+        
+        action.nextNode.forEach(async node => {
+            const nextNode = this.nodes[node];
+            await nextNode.node.onPrevAction(action.id, preRet);
+            nextNode.state = NodeState.ACTIVED;
+        })
 
-        return Promise.resolve(true);
+        action.state = ActionState.TRIGGERED;
+
+        return Promise.resolve();
     }
 }

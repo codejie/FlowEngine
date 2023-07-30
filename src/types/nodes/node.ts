@@ -19,17 +19,27 @@ export abstract class NodeType extends BaseType {
     public style: NodeStyle = {}
     public permission: NodePermission = {}
 
+    protected nextActions: string[] = []; // actioinId
+
     constructor(id: string, type: number = 0, name?: string, description?: string) {
         super(id, name, description);
         this.type = type;
+        this.initNextActions();
     }
+
+    protected initNextActions(): void {}
 
     public onNextAction(actionId: string): Promise<any> | Promise<undefined> {
         return Promise.resolve(undefined);
     }
 
-    public onPrevAction(actionId: string, data?: any): Promise<void> {
+    public async onPrevAction(actionId: string, data?: any): Promise<void> {
+        await this.createTask(actionId, data);
         return Promise.resolve();
+    }
+
+    protected createTask(actioId: string, data?: any): Promise<number> {
+        return Promise.resolve(0);// task id
     }
 
     // public abstract save(): void;
