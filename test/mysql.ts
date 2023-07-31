@@ -4,7 +4,11 @@ const db: Database = new Database();
 
 export async function test() {
     await db.connect('host.docker.internal', 3306, 'flow_engine', 'root', '123');
-    await db.execute('INSERT INTO nodes (`id`, `name`, `description`, `type`) VALUES (?,?,?,?)', ['start','t', 'for test', '2']);
+    try {
+        await db.execute('INSERT INTO nodes (`id`, `name`, `description`, `type`) VALUES (?,?,?,?)', ['start','t', 'for test', '2']);
+    } catch (error) {
+        console.log(error);
+    }
     const results = await db.query('SELECT * FROM nodes');
     results.forEach(r => {
         console.log(r);

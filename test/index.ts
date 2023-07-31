@@ -1,3 +1,7 @@
 import { test } from "./mysql";
 
-test();
+try {
+    test();
+} catch (error) {
+    console.error(error);
+}
