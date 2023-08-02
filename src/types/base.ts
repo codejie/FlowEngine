@@ -1,3 +1,15 @@
+export enum OnActionState {
+    DISMISS = 0,
+    KEEP = 1
+}
+
+export type ActionData = any;
+
+export interface ActionResult {
+    state: OnActionState,
+    data: ActionData
+}
+
 export abstract class BaseType {
     public id: string;
     public name?: string;

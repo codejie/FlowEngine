@@ -1,5 +1,4 @@
-import { BaseType } from "../base";
-import { ActionType } from "../actions/action";
+import { ActionData, ActionResult, BaseType, OnActionState } from "../base";
 
 interface NodeAttribute {
 
@@ -44,16 +43,19 @@ export abstract class NodeType extends BaseType {
         return this.nextActions;
     }
 
-    public onNextAction(actionId: string): Promise<any> | Promise<undefined> {
-        return Promise.resolve(undefined);
+    public onNextAction(actionId: string, data?: ActionData): Promise<ActionResult> {
+        return Promise.resolve({
+            state: OnActionState.DISMISS,
+            data: undefined
+        });
     }
 
-    public async onPrevAction(actionId: string, data?: any): Promise<void> {
+    public async onPrevAction(actionId: string, data?: ActionData): Promise<void> {
         await this.createTask(actionId, data);
         return Promise.resolve();
     }
 
-    protected createTask(actioId: string, data?: any): Promise<number> {
+    protected createTask(actioId: string, data?: ActionData): Promise<number> {
         return Promise.resolve(0);// task id
     }
 
