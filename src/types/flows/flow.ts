@@ -1,4 +1,4 @@
-import { ActionType } from "../actions/action"
+import { ActionMode, ActionType } from "../actions/action"
 import { ActionData, BaseType, OnActionState } from "../base"
 import { NodeType } from "../nodes/node"
 
@@ -21,20 +21,27 @@ interface NodeIndex {
 }
 
 interface ActionIndex {
-    prevNode: number
     id: string
+    mode: ActionMode,
     nextNodes: number[],
-    state: ActionState
+    state: ActionState    
+}
+
+interface NodeActionIndex {
+    [key: number] : ActionIndex[]
 }
 
 export default class FlowType extends BaseType {
     private index: number = 0;
 
     private nodes: NodeIndex[] = [];
-    private actions: ActionIndex[] = [];
+    private nodeActions: NodeActionIndex = {};
 
     protected findActionIndex(nodeIndex: number, actionId: string): ActionIndex | undefined {
-        return this.actions.find(element => (element.prevNode === nodeIndex && element.id == actionId));
+        const node = this.nodeActions[nodeIndex];
+        return node?.find(element => (element.id === actionId));
+
+        // return this.actions.find(element => (element.prevNode === nodeIndex && element.id == actionId));
     }
 
     protected findNodeIndex(nodeIndex?: number): NodeIndex | undefined {
@@ -49,13 +56,21 @@ export default class FlowType extends BaseType {
             state: NodeState.INIT
         });
 
-        node.getNextActions().forEach(actionId => {
-            this.actions.push({
-                prevNode: index,
-                id: actionId,
+        node.getNextActions().forEach(action => {
+            this.nodeActions[index].push({
+                id: action.id,
+                mode: action.mode,
                 nextNodes: [],
                 state: ActionState.INIT
-            });          
+            });
+
+            // this.actions.push({
+            //     prevNode: index,
+            //     id: action.id,
+            //     mode: action.mode,
+            //     nextNodes: [],
+            //     state: ActionState.INIT
+            // });          
         });
         return index;
     }
@@ -79,9 +94,9 @@ export default class FlowType extends BaseType {
         return this.nodes;
     }
 
-    public getActions(): ActionIndex[] {
-        return this.actions;
-    }
+    // public getActions(): ActionIndex[] {
+    //     return this.actions;
+    // }
 
     public show(): void {
         function showNode(node: NodeIndex): string {
@@ -107,42 +122,36 @@ export default class FlowType extends BaseType {
 
         // actions
         console.log('Actions:');
+        Object.keys(this.nodeActions).forEach(key => {
+            
+        });
+
         this.actions.forEach(action => {
             console.log(`\t${showAction(this, action)}`)
         });
     }
 
-    public async onActionTriggered(index: number): Promise<void> {
-        const action = this.actions[index];
-        if (!action.prevNode || !action.nextNodes) {
-            throw new Error('action missing node.');
-        }
-        const prevNode = this.nodes[action.prevNode];
-        const preRet = await prevNode.node.onNextAction(action.id);
-        prevNode.state = NodeState.PASSED;
-        
-        action.nextNodes.forEach(async node => {
-            const nextNode = this.nodes[node];
-            await nextNode.node.onPrevAction(action.id, preRet);
-            nextNode.state = NodeState.ACTIVED;
-        })
-
-        action.state = ActionState.TRIGGERED;
-
-        return Promise.resolve();
+    public checkNodeAutoAction(nodeIndex: number): Promise<OnActionState> {
+        this.actions.forEach()
+        const node = this.findNodeIndex(nodeIndex);
+        if 
     }
 
     public async onAction(nodeIndex: number, actionId: string, data: ActionData): Promise<OnActionState> { //ActionResult
         const action = this.findActionIndex(nodeIndex, actionId);
+        action && (action!.state = ActionState.TRIGGERED);
 
         const node = this.findNodeIndex(action?.prevNode);
         if (node) {
+            node.state = NodeState.PASSED;
             const preRet = await node?.node.onNextAction(actionId, data);
             if (preRet.state === OnActionState.DISMISS) {
                 const action = this.findActionIndex(nodeIndex, actionId);
                 action?.nextNodes.forEach(async node => {
                     const nextNode = this.findNodeIndex(node);
                     await nextNode?.node.onPrevAction(data);
+                    
+                    nextNode && (nextNode.state = NodeState.ACTIVED);
                 });  
             }
             return preRet.state;        

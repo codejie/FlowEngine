@@ -1,6 +1,12 @@
 import { BaseType } from "../base";
 import { NodeType } from "../nodes/node";
 
+export enum ActionMode {
+    NORMAL = 0,
+    AUTO = 1,
+    DELAY = 2
+}
+
 interface ActionAttribute {
 
 }
@@ -14,14 +20,13 @@ interface ActionPermission {
 }
 
 export abstract class ActionType extends BaseType {
-    public type: number;
+    mode: ActionMode = ActionMode.NORMAL;
     attributes: ActionAttribute[] = [];
     style: ActionStyle = {};
     permission: ActionPermission = {};
 
-    constructor(id: string, type: number = 0, name?: string, description?: string) {
+    constructor(id: string, name?: string, description?: string) {
         super(id, name, description);
-        this.type = type;
     }
 
     public onPrevNode(node: NodeType): boolean {

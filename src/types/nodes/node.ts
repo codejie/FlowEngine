@@ -1,3 +1,4 @@
+import { ActionMode } from "../actions/action";
 import { ActionData, ActionResult, BaseType, OnActionState } from "../base";
 
 interface NodeAttribute {
@@ -12,14 +13,10 @@ interface NodePermission {
 
 }
 
-// enum NextActionState {
-//     DISABLED = 0,
-//     ENABLED = 1
-// }
-
-// interface NextActionIndex {
-//     [key: string]: NextActionState
-// }
+interface NextAction {
+    id: string,
+    mode: ActionMode
+}
 
 export abstract class NodeType extends BaseType {
     public type: number;
@@ -27,19 +24,19 @@ export abstract class NodeType extends BaseType {
     public style: NodeStyle = {}
     public permission: NodePermission = {}
 
-    protected nextActions: string[] = []; // actionId // NextActionIndex = {}; // actioinId + state
+    protected nextActions: NextAction[] = []; // actionId // NextActionIndex = {}; // actioinId + state
 
     constructor(id: string, type: number = 0, name?: string, description?: string) {
         super(id, name, description);
         this.type = type;
     }
 
-    protected addNextAction(id: string): void {
+    protected addNextAction(id: string, mode: ActionMode = ActionMode.NORMAL): void {
         // this.nextActions[id] = state;
-        this.nextActions.push(id);
+        this.nextActions.push({id, mode});
     }
 
-    public getNextActions(): string[] {
+    public getNextActions(): NextAction[] {
         return this.nextActions;
     }
 
@@ -51,7 +48,8 @@ export abstract class NodeType extends BaseType {
     }
 
     public async onPrevAction(actionId: string, data?: ActionData): Promise<void> {
-        await this.createTask(actionId, data);
+        const taskId = await this.createTask(actionId, data);
+        
         return Promise.resolve();
     }
 
