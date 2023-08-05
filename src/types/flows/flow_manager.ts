@@ -1,3 +1,4 @@
+import { ActionData, OnActionState } from "../base";
 import FlowType from "./flow";
 
 interface FlowIndexes {
@@ -18,13 +19,21 @@ export default class FlowManager {
         return this.index;
     }
 
-    public onAction(flow: number, action: number): Promise<void> {
+    public startFlow(flow: number): Promise<OnActionState | void> {
+        const f: FlowType | undefined = this.flows[flow];
+        if (!f) {
+            throw new Error('not found flow - ' + flow);
+        }
+        return f.onStart();
+    }
+
+    public onAction(flow: number, nodeIndex: number, actionId: string, data?: ActionData): Promise<OnActionState> {
         const f: FlowType | undefined = this.flows[flow];
         if (!f) {
             throw new Error('not found flow - ' + flow);
         }
 
-        return f.onActionTriggered(action);
+        return f.onAction(nodeIndex, actionId, data);
     }
 
 }
