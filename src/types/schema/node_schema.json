@@ -1,0 +1,46 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/product.schema.json",
+    "title": "Node Definintion",
+    "description": "The Node definition schema",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "parameter": {
+            "type": "object",
+            "properties": {
+            }
+        },
+        "actions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "mode": {
+                        "type": "string",
+                        "enum": ["NORMAL", "AUTO", "DELAY"]
+                    },
+                    "payload": {
+                        "type": "object",
+                        "properties": {
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "required": ["id"]
+
+
+}
