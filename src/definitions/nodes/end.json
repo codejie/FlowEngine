@@ -1,0 +1,5 @@
+{
+    "id": "NODE_END",
+    "name": "EndNode",
+    "description": "The last node of all flows."
+}

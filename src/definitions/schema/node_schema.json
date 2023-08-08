@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://example.com/product.schema.json",
+    "$id": "https://github.com/codejie/flowengine/node_schema.json",
     "title": "Node Definintion",
     "description": "The Node definition schema",
     "type": "object",
@@ -14,9 +14,22 @@
         "description": {
             "type": "string"
         },
-        "parameter": {
-            "type": "object",
-            "properties": {
+        "parameters": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "[string | number | boolean | object | array | null]"
+                    },
+                    "flag": {
+                        "type": "string",
+                        "enum": ["REQUIRED", "OPTIONAL"]
+                    }
+                }
             }
         },
         "actions": {
@@ -41,6 +54,4 @@
         }
     },
     "required": ["id"]
-
-
 }

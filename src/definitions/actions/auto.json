@@ -1,0 +1,5 @@
+{
+    "id": "ACTION_AUTO",
+    "name": "AutoAction",
+    "description": "It should trigger automatically."
+}
