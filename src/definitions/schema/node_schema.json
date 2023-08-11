@@ -26,8 +26,8 @@
                         "type": "[string | number | boolean | object | array | null]"
                     },
                     "flag": {
-                        "type": "string",
-                        "enum": ["REQUIRED", "OPTIONAL"]
+                        "type": "number",
+                        "enum": ["OPTIONAL", "REQUIRED"]
                     }
                 }
             }
@@ -41,8 +41,12 @@
                         "type": "string"
                     },
                     "mode": {
-                        "type": "string",
+                        "type": "number",
                         "enum": ["NORMAL", "AUTO", "DELAY"]
+                    },
+                    "state": {
+                        "type": "number",
+                        "enum": ["DISMISS", "KEEP"]
                     },
                     "payload": {
                         "type": "object",
