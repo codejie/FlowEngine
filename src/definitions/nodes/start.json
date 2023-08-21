@@ -5,7 +5,7 @@
     "actions": [
         {
             "id": "ACTION_AUTO",
-            "mode": 1
+            "mode": "AUTO"
         }
     ]
 }

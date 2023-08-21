@@ -1,0 +1,22 @@
+{
+    "id": "NODE_INPUT",
+    "name": "InputNode",
+    "description": "This node takes a VALUE parameter.",
+    "parameters": [
+        {
+            "name": "value",
+            "value": "string",
+            "flag":  "REQUIRED"
+        }
+    ],
+    "actions": [
+        {
+            "id": "ACTION_OK",
+            "mode": "NORMAL"
+        },
+        {
+            "id": "ACTION_CANCEL",
+            "mode": "NORMAL"
+        }
+    ]
+}

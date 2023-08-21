@@ -7,7 +7,8 @@ const NodeDefinitions: {
     [key in string]: string
 } = {
     "NODE_START": "start.json",
-    "NODE_END": "end.json"
+    "NODE_END": "end.json",
+    "NODE_INPUT": "input.json"
 }
 
 export default class NodeFactory {

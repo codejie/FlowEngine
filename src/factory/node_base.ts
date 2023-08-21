@@ -1,13 +1,13 @@
 
 export enum ParameterFlag {
-    OPTIONAL = 0,
-    REQUIRED = 1
+    OPTIONAL = 'OPTIONAL',
+    REQUIRED = 'REQUIRED'
 }
 
 export enum ActionMode {
-    NORMAL = 0,
-    AUTO = 1,
-    DELAY = 2
+    NORMAL = 'NORMAL',
+    AUTO = 'AUTO',
+    DELAY = 'DELAY'
 }
 
 export enum OnActionState {

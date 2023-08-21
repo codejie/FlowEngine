@@ -5,7 +5,9 @@ const ACTION_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/a
 const ActionDefinitions: {
     [key in string]: string
 } = {
-    "ACTION_AUTO": "auto.json"
+    "ACTION_AUTO": "auto.json",
+    "ACTION_OK": "ok.json",
+    "ACTION_CANCEL": "cancel.json"
 }
 
 export default class ActionFactory {
