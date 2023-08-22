@@ -1,3 +1,4 @@
+import Logger from '../logger';
 
 export enum ParameterFlag {
     OPTIONAL = 'OPTIONAL',
@@ -68,9 +69,11 @@ export class NodeBase {
     public onNextAction(actionId: string, data?: ActionData): Promise<ActionResult> {
         const action = this.findAction(actionId);
         if (action) {
+            Logger.debug(`onNextAction - [${this.id}](${actionId})`);
+            Logger.debug('data:\n', data);
             return Promise.resolve({
                 state: action.state || OnActionState.DISMISS,
-                data: {...action.payload, ...data }
+                data: data //{...action.payload, ...data }
             });
         } else {
             return Promise.reject(new Error('Not found action - '+ actionId));
@@ -78,6 +81,9 @@ export class NodeBase {
     }
 
     public onPrevAction(actionId: string, data?: ActionData): Promise<number> {
+        Logger.debug(`onPrevAction - [${this.id}](${actionId})`);
+        Logger.debug('data:\n', data);
+
         return this.createTask(actionId, data);
     }
 }

@@ -1,6 +1,6 @@
 import { ActionMode, NodeBase, OnActionState, ActionData } from "../factory/node_base";
 import NodeFactory from "../factory/node_factory";
-
+import Logger from "../logger";
 
 enum NodeState {
     INIT = 0,
@@ -113,18 +113,18 @@ export default class Flow {
              return `${showNode(prev)}<-(${action.id}@${action.state})->${showNode(next)}`;
         }
         // nodes
-        console.log('Nodes:');
+        Logger.info('Nodes:');
         this.nodes.forEach(node => {
-            console.log(`\t${showNode(node)}`);
+            Logger.info(`\t${showNode(node)}`);
         });
 
         // actions
-        console.log('Actions:');
+        Logger.info('Actions:');
         this.nodes.forEach(node => {
             node.nextActions.forEach(action => {
                 action.nextNodes.forEach(nextNode => {
                     const next = this.findNodeIndex(nextNode);
-                    console.log(`\t${showAction(node, action, next)}`);
+                    Logger.info(`\t${showAction(node, action, next)}`);
                 });
             });
         });
@@ -149,6 +149,9 @@ export default class Flow {
         const action = this.findActionIndex(nodeIndex, actionId);
         action && (action!.state = ActionState.TRIGGERED);
 
+        Logger.debug(`[${nodeIndex}](${actionId}) is triggered.`);
+        Logger.debug('playload:\n', data);
+
         const node = this.findNodeIndex(nodeIndex);
         if (node) {
             node.state = NodeState.PASSED;
@@ -159,7 +162,7 @@ export default class Flow {
                     const nextNode = this.findNodeIndex(node);
                     if (nextNode) {
                         nextNode.state = NodeState.ACTIVED;
-                        await nextNode.node.onPrevAction(data);
+                        await nextNode.node.onPrevAction(actionId, preRet.data);
                         await this.checkNodeAutoAction(nextNode);
                     }
                 });  

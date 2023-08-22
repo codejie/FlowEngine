@@ -14,8 +14,9 @@
                 "${workspaceFolder}/dist/**/*.js",
                 "!**/node_modules/**"
             ],
-            "internalConsoleOptions": "openOnSessionStart",
-            "outputCapture": "console"
+            // "internalConsoleOptions": "openOnSessionStart",
+            // "outputCapture": "std",
+            "console": "integratedTerminal"
         }
     ]
 }
