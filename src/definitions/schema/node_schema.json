@@ -14,7 +14,7 @@
         "description": {
             "type": "string"
         },
-        "parameters": {
+        "options": {
             "type": "array",
             "items": {
                 "type": "object",
@@ -23,17 +23,16 @@
                         "type": "string"
                     },
                     "value": {
-                        "type": "string",
-                        "enum": ["string", "number", "boolean", "object", "array", "null"]
+                        "type": ["string", "number", "boolean", "object", "array", "null"]
                     },
-                    "flag": {
+                    "flag": { 
                         "type": "string",
                         "enum": ["OPTIONAL", "REQUIRED"]
                     }
                 }
             }
         },
-        "actions": {
+        "nextActions": {
             "type": "array",
             "items": {
                 "type": "object",
@@ -50,12 +49,17 @@
                         "enum": ["DISMISS", "KEEP"]
                     },
                     "payload": {
-                        "type": "object",
-                        "properties": {
-                        }
+                        "type": "object"
+                    },
+                    "onAction": {
+                        "type": "string"
                     }
-                }
+                },
+                "required": ["id"]
             }
+        },
+        "prevAction": {
+            "type": "string"
         }
     },
     "required": ["id"]

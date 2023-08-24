@@ -1,18 +1,15 @@
 {
     "id": "NODE_INPUT",
     "name": "InputNode",
-    "description": "This node takes a VALUE parameter.",
-    "parameters": [
-        {
-            "name": "value",
-            "value": "string",
-            "flag":  "REQUIRED"
-        }
-    ],
-    "actions": [
+    "description": "while OK action, this node would get a VALUE data.",
+    "options": [],
+    "nextActions": [
         {
             "id": "ACTION_OK",
-            "mode": "NORMAL"
+            "mode": "NORMAL",
+            "payload": {
+                "inner": "world"
+            }
         },
         {
             "id": "ACTION_CANCEL",

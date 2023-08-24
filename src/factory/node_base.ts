@@ -1,4 +1,5 @@
 import Logger from '../logger';
+import { OnNextActionFunction, OnPrevActionFunction } from './action_function_factory';
 
 export enum ParameterFlag {
     OPTIONAL = 'OPTIONAL',
@@ -33,7 +34,8 @@ export interface Action {
     id: string,
     mode?: ActionMode,
     state?: OnActionState,
-    payload?: any
+    payload?: any,
+    onAction?: OnNextActionFunction
 }
 
 export class NodeBase {
@@ -42,7 +44,8 @@ export class NodeBase {
     public description?: string;
 
     public parameters: Parameter[] = [];
-    public actions: Action[] = [];
+    public nextActions: Action[] = [];
+    public prevAction?: OnPrevActionFunction;
 
     public constructor(id: string, name?: string, description?: string) {
         this.id = id;
@@ -50,8 +53,8 @@ export class NodeBase {
         this.description = description;
     }
 
-    protected findAction(id: string): Action | undefined {
-        return this.actions.find(item => item.id === id);
+    protected findNextAction(id: string): Action | undefined {
+        return this.nextActions.find(item => item.id === id);
     }
 
     protected createTask(actioId: string, data?: ActionData): Promise<number> {
@@ -63,17 +66,18 @@ export class NodeBase {
     }
 
     public addNextAction(action: Action): void {
-        this.actions.push(action);
+        this.nextActions.push(action);
     }
 
     public onNextAction(actionId: string, data?: ActionData): Promise<ActionResult> {
-        const action = this.findAction(actionId);
+        const action = this.findNextAction(actionId);
         if (action) {
             Logger.debug(`onNextAction - [${this.id}](${actionId})`);
             Logger.debug('data:\n', data);
+            if (action)
             return Promise.resolve({
                 state: action.state || OnActionState.DISMISS,
-                data: data //{...action.payload, ...data }
+                data: {...action.payload, ...data }
             });
         } else {
             return Promise.reject(new Error('Not found action - '+ actionId));

@@ -2,7 +2,7 @@
     "id": "NODE_START",
     "name": "StartNode",
     "description": "It should be the first node of all flows.",
-    "actions": [
+    "nextActions": [
         {
             "id": "ACTION_AUTO",
             "mode": "AUTO"

@@ -1,3 +1,4 @@
+import { OnNextActionFunction } from "../factory/action_function_factory";
 import { ActionMode, NodeBase, OnActionState, ActionData } from "../factory/node_base";
 import NodeFactory from "../factory/node_factory";
 import Logger from "../logger";
@@ -24,7 +25,8 @@ interface ActionIndex {
     id: string
     mode: ActionMode,
     nextNodes: number[],
-    state: ActionState    
+    state: ActionState,
+    onAction?: OnNextActionFunction
 }
 
 export default class Flow {
@@ -50,12 +52,13 @@ export default class Flow {
         const node = await NodeFactory.make(id)
         const nextActions: ActionIndex[] = [];
         
-        node.actions.forEach(action => {
+        node.nextActions.forEach(action => {
             nextActions.push({
                 id: action.id,
                 mode: action.mode || ActionMode.NORMAL,
                 nextNodes: [],
-                state: ActionState.INIT
+                state: ActionState.INIT,
+                onAction: action.onAction
             });
         });
 
@@ -146,11 +149,28 @@ export default class Flow {
     }
 
     public async onAction(nodeIndex: number, actionId: string, data?: ActionData): Promise<OnActionState> { //ActionResult
+        Logger.debug(`[${nodeIndex}](${actionId}) is triggered.`);
+        Logger.debug('playload:\n', data);
+
+        const node = this.findNodeIndex(nodeIndex);
+        if (node) {
+            const action = node?.nextActions.find(element => (element.id === actionId));
+            if (action) {
+                action.state = ActionState.TRIGGERED;
+                if (action.onAction) {
+                    action.onAction(action);
+                }
+                action.onAction?.apply(node)();
+            }
+        }
+
+
         const action = this.findActionIndex(nodeIndex, actionId);
         action && (action!.state = ActionState.TRIGGERED);
 
         Logger.debug(`[${nodeIndex}](${actionId}) is triggered.`);
         Logger.debug('playload:\n', data);
+        
 
         const node = this.findNodeIndex(nodeIndex);
         if (node) {

@@ -1,5 +1,6 @@
 import { readFile } from "fs";
-import { Action, NodeBase, Parameter } from "./node_base";
+import { NodeBase } from "./node_base";
+import { getOnNextActionFunction, getOnPrevActionFunction } from "./action_function_factory";
 
 const NODE_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/nodes/";
 
@@ -8,7 +9,8 @@ const NodeDefinitions: {
 } = {
     "NODE_START": "start.json",
     "NODE_END": "end.json",
-    "NODE_INPUT": "input.json"
+    "NODE_INPUT": "input.json",
+    "NODE_OUTPUT": "output.json"
 }
 
 export default class NodeFactory {
@@ -16,14 +18,27 @@ export default class NodeFactory {
         const json = await NodeFactory.loadJSON(id);
         const node = new NodeBase(id, json.name, json.description);
         if (json.parameters) {
-            json.parameters.forEach((item: Parameter) => {
-                node.addParameter(item);
+            json.parameters.forEach((item: any) => {
+                node.addParameter({
+                    name: item.name,
+                    value: item.value,
+                    flag: item.flag
+                });
             });
         }
-        if (json.actions) {
-            json.actions.forEach((item: Action) => {
-                node.addNextAction(item);
+        if (json.nextActions) {
+            json.nextActions.forEach((item: any) => {
+                node.addNextAction({
+                    id: item.id,
+                    mode: item.mode,
+                    state: item.OnActionState,
+                    payload: item.payload,
+                    onAction: getOnNextActionFunction(item.onAction)
+                });
             });
+        }
+        if (json.prevAction) {
+            node.prevAction = getOnPrevActionFunction(json.prevAction);
         }
         return node;
     }
@@ -37,4 +52,5 @@ export default class NodeFactory {
             });
         });
     }
+
 }

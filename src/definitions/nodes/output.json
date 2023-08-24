@@ -1,0 +1,12 @@
+{
+    "id": "NODE_OUTPUT",
+    "name": "OutputNode",
+    "description": "the node shows info received.",
+    "nextActions": [
+        {
+            "id": "ACTION_OK",
+            "mode": "AUTO"
+        }
+    ],
+    "prevAction": "node_preaction_output"
+}
