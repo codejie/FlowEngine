@@ -1,5 +1,5 @@
 import { readFile } from "fs";
-import { NodeBase } from "./node_base";
+import { ActionMode, NodeBase, OnActionState } from "./node_base";
 import { getOnNextActionFunction, getOnPrevActionFunction } from "./action_function_factory";
 
 const NODE_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/nodes/";
@@ -30,8 +30,8 @@ export default class NodeFactory {
             json.nextActions.forEach((item: any) => {
                 node.addNextAction({
                     id: item.id,
-                    mode: item.mode,
-                    state: item.OnActionState,
+                    mode: item.mode || ActionMode.NORMAL,
+                    onResult: item.OnActionState || OnActionState.DISMISS,
                     payload: item.payload,
                     onAction: getOnNextActionFunction(item.onAction)
                 });

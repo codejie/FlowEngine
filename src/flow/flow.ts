@@ -1,5 +1,5 @@
 import { OnNextActionFunction } from "../factory/action_function_factory";
-import { ActionMode, NodeBase, OnActionState, ActionData } from "../factory/node_base";
+import { ActionMode, NodeBase, OnActionState, ActionData, Action } from "../factory/node_base";
 import NodeFactory from "../factory/node_factory";
 import Logger from "../logger";
 
@@ -23,10 +23,10 @@ interface NodeIndex {
 
 interface ActionIndex {
     id: string
-    mode: ActionMode,
+    // mode: ActionMode,
     nextNodes: number[],
     state: ActionState,
-    onAction?: OnNextActionFunction
+    // onAction?: OnNextActionFunction
 }
 
 export default class Flow {
@@ -44,6 +44,11 @@ export default class Flow {
         return node?.nextActions.find(element => (element.id === actionId));
     }
 
+    // protected findNodeAction(nodeIndex: number, actionId: string): Action | undefined {
+    //     const index = this.findNodeIndex(nodeIndex);
+    //     return index?.node.nextActions.find(element => (element.id === actionId));
+    // }
+
     protected findNodeIndex(nodeIndex?: number): NodeIndex | undefined {
         return this.nodes.find(element => element.index === nodeIndex);
     }
@@ -55,10 +60,10 @@ export default class Flow {
         node.nextActions.forEach(action => {
             nextActions.push({
                 id: action.id,
-                mode: action.mode || ActionMode.NORMAL,
+                // mode: action.mode || ActionMode.NORMAL,
                 nextNodes: [],
                 state: ActionState.INIT,
-                onAction: action.onAction
+                // onAction: action.onAction
             });
         });
 
@@ -140,30 +145,42 @@ export default class Flow {
         return Promise.resolve();
     }
 
-    public checkNodeAutoAction(node: NodeIndex): Promise<OnActionState | void> {
-        const actionIndex = node.nextActions.find(element => element.mode === ActionMode.AUTO);
-        if (actionIndex) {
-            return this.onAction(node.index, actionIndex.id);
+    public checkNodeAutoAction(nodeIndex: NodeIndex): Promise<OnActionState | void> {
+        const node = nodeIndex.node;
+        for (const actionIndex of nodeIndex.nextActions) {
+            const action = node.nextActions.find(element => element.id === actionIndex.id);
+            if (action?.mode === ActionMode.AUTO) {
+                return this.onNextAction(nodeIndex, actionIndex, action);// action.onAction!.call(node, action);
+            }
         }
         return Promise.resolve();
+
+        // const actionIndex = node.nextActions.find(element => element.mode === ActionMode.AUTO);
+        // if (actionIndex) {
+        //     return this.onAction(node.index, actionIndex.id);
+        // }
+        // return Promise.resolve();
+    }
+
+    protected async onNextAction(nodeIndex: NodeIndex, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<OnActionState> {
+        nodeIndex.state = NodeState.PASSED;
+        const actionResult = await nodeIndex.node.onNextAction() action.onAction.call(nodeIndex, action, data);
+        if (actionResult.onState === OnActionState.DISMISS) {
+            actionIndex.nextNodes.forEach(async nextIndex => {
+                const nextNode = this.findNodeIndex(nextIndex);
+                if (nextNode) {
+                    nextNode.state = NodeState.ACTIVED;
+                    await nextNode.node.onPrevAction.call(nodeIndex, action, actionResult.data);
+                }
+
+            });
+        }
+        throw new Error("Method not implemented.");
     }
 
     public async onAction(nodeIndex: number, actionId: string, data?: ActionData): Promise<OnActionState> { //ActionResult
         Logger.debug(`[${nodeIndex}](${actionId}) is triggered.`);
         Logger.debug('playload:\n', data);
-
-        const node = this.findNodeIndex(nodeIndex);
-        if (node) {
-            const action = node?.nextActions.find(element => (element.id === actionId));
-            if (action) {
-                action.state = ActionState.TRIGGERED;
-                if (action.onAction) {
-                    action.onAction(action);
-                }
-                action.onAction?.apply(node)();
-            }
-        }
-
 
         const action = this.findActionIndex(nodeIndex, actionId);
         action && (action!.state = ActionState.TRIGGERED);
@@ -176,7 +193,7 @@ export default class Flow {
         if (node) {
             node.state = NodeState.PASSED;
             const preRet = await node?.node.onNextAction(actionId, data);
-            if (preRet.state === OnActionState.DISMISS) {
+            if (preRet.onState === OnActionState.DISMISS) {
                 // const action = this.findActionIndex(nodeIndex, actionId);
                 action?.nextNodes.forEach(async node => {
                     const nextNode = this.findNodeIndex(node);
@@ -187,7 +204,7 @@ export default class Flow {
                     }
                 });  
             }
-            return preRet.state;        
+            return preRet.onState;        
         }
         return OnActionState.DISMISS;
     }

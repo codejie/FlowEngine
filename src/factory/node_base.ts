@@ -20,7 +20,7 @@ export enum OnActionState {
 export type ActionData = any;
 
 export interface ActionResult {
-    state: OnActionState,
+    onState: OnActionState,
     data: ActionData    
 }
 
@@ -32,10 +32,10 @@ export interface Parameter {
 
 export interface Action {
     id: string,
-    mode?: ActionMode,
-    state?: OnActionState,
+    mode: ActionMode,
+    onResult: OnActionState,
     payload?: any,
-    onAction?: OnNextActionFunction
+    onAction: OnNextActionFunction
 }
 
 export class NodeBase {
@@ -69,19 +69,23 @@ export class NodeBase {
         this.nextActions.push(action);
     }
 
+    // public onNextAction(actionId: string, data?: ActionData): Promise<ActionResult> {
+    //     const action = this.findNextAction(actionId);
+    //     if (action) {
+    //         Logger.debug(`onNextAction - [${this.id}](${actionId})`);
+    //         Logger.debug('data:\n', data);
+    //         // if (action)
+    //         return Promise.resolve({
+    //             onResult: action.onResult,
+    //             data: {...action.payload, ...data }
+    //         });
+    //     } else {
+    //         return Promise.reject(new Error('Not found action - '+ actionId));
+    //     }
+    // }
+
     public onNextAction(actionId: string, data?: ActionData): Promise<ActionResult> {
-        const action = this.findNextAction(actionId);
-        if (action) {
-            Logger.debug(`onNextAction - [${this.id}](${actionId})`);
-            Logger.debug('data:\n', data);
-            if (action)
-            return Promise.resolve({
-                state: action.state || OnActionState.DISMISS,
-                data: {...action.payload, ...data }
-            });
-        } else {
-            return Promise.reject(new Error('Not found action - '+ actionId));
-        }
+
     }
 
     public onPrevAction(actionId: string, data?: ActionData): Promise<number> {
