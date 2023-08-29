@@ -4,47 +4,91 @@ import { getOnNextActionFunction, getOnPrevActionFunction } from "./action_funct
 
 const NODE_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/nodes/";
 
-const NodeDefinitions: {
-    [key in string]: string
-} = {
-    "NODE_START": "start.json",
-    "NODE_END": "end.json",
-    "NODE_INPUT": "input.json",
-    "NODE_OUTPUT": "output.json"
-}
+// const NodeDefinitions: {
+//     [key in string]: string
+// } = {
+//     "NODE_START": "start.json",
+//     "NODE_END": "end.json",
+//     "NODE_INPUT": "input.json",
+//     "NODE_OUTPUT": "output.json"
+// }
+
+const NodeDefinitions: string[] = [
+    'start.json',
+    'end.json',
+    'input.json',
+    'output.json'
+];
+
+type NodeCollection = {
+    [key in string]: NodeBase
+};
 
 export default class NodeFactory {
-    public static async make(id: string): Promise<NodeBase> {       
-        const json = await NodeFactory.loadJSON(id);
-        const node = new NodeBase(id, json.name, json.description);
-        if (json.parameters) {
-            json.parameters.forEach((item: any) => {
-                node.addParameter({
-                    name: item.name,
-                    value: item.value,
-                    flag: item.flag
+    public static async loadCollection(): Promise<NodeCollection> {
+        const ret: NodeCollection = {};
+        for (const file of NodeDefinitions) {
+            const json = await NodeFactory.loadJSON(file);
+            const node = new NodeBase(json.id, json.name, json.description);
+            if (json.parameters) {
+                json.parameters.forEach((item: any) => {
+                    node.addParameter({
+                        name: item.name,
+                        value: item.value,
+                        flag: item.flag
+                    });
                 });
-            });
-        }
-        if (json.nextActions) {
-            json.nextActions.forEach((item: any) => {
-                node.addNextAction({
-                    id: item.id,
-                    mode: item.mode || ActionMode.NORMAL,
-                    onResult: item.OnActionState || OnActionState.DISMISS,
-                    payload: item.payload,
-                    onAction: getOnNextActionFunction(item.onAction)
+            }
+            if (json.nextActions) {
+                json.nextActions.forEach((item: any) => {
+                    node.addNextAction({
+                        id: item.id,
+                        mode: item.mode || ActionMode.NORMAL,
+                        onResult: item.OnActionState || OnActionState.DISMISS,
+                        payload: item.payload,
+                        onAction: getOnNextActionFunction(item.onAction)
+                    });
                 });
-            });
+            }
+            if (json.prevAction) {
+                node.prevAction = getOnPrevActionFunction(json.prevAction);
+            }
+            ret[json.id] = node;
         }
-        if (json.prevAction) {
-            node.prevAction = getOnPrevActionFunction(json.prevAction);
-        }
-        return node;
+        return ret;
     }
 
-    private static loadJSON(id: string): Promise<any> {
-        const file: string = NODE_DEFINITION_ROOT + NodeDefinitions[id];
+    // public static async make(id: string): Promise<NodeBase> {       
+    //     const json = await NodeFactory.loadJSON(id);
+    //     const node = new NodeBase(id, json.name, json.description);
+    //     if (json.parameters) {
+    //         json.parameters.forEach((item: any) => {
+    //             node.addParameter({
+    //                 name: item.name,
+    //                 value: item.value,
+    //                 flag: item.flag
+    //             });
+    //         });
+    //     }
+    //     if (json.nextActions) {
+    //         json.nextActions.forEach((item: any) => {
+    //             node.addNextAction({
+    //                 id: item.id,
+    //                 mode: item.mode || ActionMode.NORMAL,
+    //                 onResult: item.OnActionState || OnActionState.DISMISS,
+    //                 payload: item.payload,
+    //                 onAction: getOnNextActionFunction(item.onAction)
+    //             });
+    //         });
+    //     }
+    //     if (json.prevAction) {
+    //         node.prevAction = getOnPrevActionFunction(json.prevAction);
+    //     }
+    //     return node;
+    // }
+
+    private static loadJSON(index: string): Promise<any> {
+        const file: string = NODE_DEFINITION_ROOT + index; //NodeDefinitions[id];
         return new Promise<any>((resolve, reject) => {
             readFile(file, 'utf-8', (error, data) => {
                 if (error) return reject(error);

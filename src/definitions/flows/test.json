@@ -1,0 +1,23 @@
+{
+    "id": "FLOW_TEST",
+    "name": "TestFlow",
+    "description": "the flow for testing",
+    "nodes": [
+        {
+            "index": 1,
+            "id": "NODE_START",
+            "actions": [
+                {
+                    "id": "ACTION_AUTO",
+                    "nextNodes": [
+                        2
+                    ]
+                }
+            ]
+        },
+        {
+            "index": 2,
+            "id": "NODE_END"
+        }
+    ]
+}

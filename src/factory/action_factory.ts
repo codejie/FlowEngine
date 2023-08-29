@@ -1,24 +1,38 @@
 import { readFile } from "fs";
 import { ActionBase } from "./action_base";
+import Logger from "../logger";
 
 const ACTION_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/actions/";
-const ActionDefinitions: {
-    [key in string]: string
-} = {
-    "ACTION_AUTO": "auto.json",
-    "ACTION_OK": "ok.json",
-    "ACTION_CANCEL": "cancel.json"
+// const ActionDefinitions: {
+//     [key in string]: string
+// } = {
+//     "ACTION_AUTO": "auto.json",
+//     "ACTION_OK": "ok.json",
+//     "ACTION_CANCEL": "cancel.json"
+// }
+
+const ActionDefinitions: string[] = [
+    'auto.json',
+    'ok.json',
+    'cancel.json'
+];
+
+type ActionCollection = {
+    [key in string]: ActionBase
 }
 
 export default class ActionFactory {
-    public static async make(id: string): Promise<ActionBase> {
-        const json = await ActionFactory.loadJSON(id);
-        const action = new ActionBase(id, json.name, json.description);
-        return action;                
+    public static async loadCollection(): Promise<ActionCollection> {
+        const ret: ActionCollection = {};
+        for (const file of ActionDefinitions) {
+            const json = await ActionFactory.loadJSON(file);
+            ret[json.id] = new ActionBase(json.id, json.name, json.description);
+        };
+        return ret;
     }
 
-    private static loadJSON(id: string): Promise<any> {
-        const file: string = ACTION_DEFINITION_ROOT + ActionDefinitions[id];
+    private static loadJSON(index: string): Promise<any> {
+        const file: string = ACTION_DEFINITION_ROOT + index; //ActionDefinitions[id];
         return new Promise<any>((resolve, reject) => {
             readFile(file, 'utf-8', (error, data) => {
                 if (error) return reject(error);
@@ -26,5 +40,15 @@ export default class ActionFactory {
             });
         });
     }
-
 }
+
+// export const globalActionCollection: ActionCollection = {};
+
+// ActionFactory.loadActionCollection()
+//     .then(ret => {
+//         Logger.info('Action collection be loaded succ.');
+//     })
+//     .catch((error: Error) => {
+//         Logger.info('Action collection be loaded fail - ' + error.message);
+//     });
+
