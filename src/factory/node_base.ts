@@ -84,9 +84,9 @@ export class NodeBase {
     //     }
     // }
 
-    public onNextAction(actionId: string, data?: ActionData): Promise<ActionResult> {
+    // public onNextAction(actionId: string, data?: ActionData): Promise<ActionResult> {
 
-    }
+    // }
 
     public onPrevAction(actionId: string, data?: ActionData): Promise<number> {
         Logger.debug(`onPrevAction - [${this.id}](${actionId})`);

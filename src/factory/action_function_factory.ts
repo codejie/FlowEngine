@@ -19,9 +19,9 @@ const OnPrevActionFunctionDefinitions: {
 }
 
 export function getOnNextActionFunction(onAction: string): OnNextActionFunction {
-    return OnNextActionFunctionDefinitions[onAction] || defaultOnNextActionFunction;
+    return OnNextActionFunctionDefinitions[onAction];// || defaultOnNextActionFunction;
 }
 
 export function getOnPrevActionFunction(onAction: string): OnPrevActionFunction {
-    return OnPrevActionFunctionDefinitions[onAction] || defaultOnPrevActionFunction;
+    return OnPrevActionFunctionDefinitions[onAction];// || defaultOnPrevActionFunction;
 }

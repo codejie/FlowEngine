@@ -53,30 +53,30 @@ export default class Flow {
         return this.nodes.find(element => element.index === nodeIndex);
     }
 
-    public async addNode(id: string): Promise<number> {
-        const node = await NodeFactory.make(id)
-        const nextActions: ActionIndex[] = [];
+    // public async addNode(id: string): Promise<number> {
+    //     const node = await NodeFactory.make(id)
+    //     const nextActions: ActionIndex[] = [];
         
-        node.nextActions.forEach(action => {
-            nextActions.push({
-                id: action.id,
-                // mode: action.mode || ActionMode.NORMAL,
-                nextNodes: [],
-                state: ActionState.INIT,
-                // onAction: action.onAction
-            });
-        });
+    //     node.nextActions.forEach(action => {
+    //         nextActions.push({
+    //             id: action.id,
+    //             // mode: action.mode || ActionMode.NORMAL,
+    //             nextNodes: [],
+    //             state: ActionState.INIT,
+    //             // onAction: action.onAction
+    //         });
+    //     });
 
-        const index = ++ this.index;
-        this.nodes.push({
-            index: index,
-            node: node,
-            state: NodeState.INIT,
-            nextActions: nextActions
-        });
+    //     const index = ++ this.index;
+    //     this.nodes.push({
+    //         index: index,
+    //         node: node,
+    //         state: NodeState.INIT,
+    //         nextActions: nextActions
+    //     });
 
-        return index;
-    }
+    //     return index;
+    // }
 
     public removeNode(nodeIndex: number): number {
         this.nodes = this.nodes.filter(element => element.index !== nodeIndex);
@@ -138,74 +138,74 @@ export default class Flow {
         });
     }
 
-    public onStart(): Promise<OnActionState | void> {
-        const node = this.nodes.find(nodeIndex => nodeIndex.node.id === 'NODE_START');
-        if (node)
-            return this.checkNodeAutoAction(node);
-        return Promise.resolve();
-    }
+    // public onStart(): Promise<OnActionState | void> {
+    //     const node = this.nodes.find(nodeIndex => nodeIndex.node.id === 'NODE_START');
+    //     if (node)
+    //         return this.checkNodeAutoAction(node);
+    //     return Promise.resolve();
+    // }
 
-    public checkNodeAutoAction(nodeIndex: NodeIndex): Promise<OnActionState | void> {
-        const node = nodeIndex.node;
-        for (const actionIndex of nodeIndex.nextActions) {
-            const action = node.nextActions.find(element => element.id === actionIndex.id);
-            if (action?.mode === ActionMode.AUTO) {
-                return this.onNextAction(nodeIndex, actionIndex, action);// action.onAction!.call(node, action);
-            }
-        }
-        return Promise.resolve();
+    // public checkNodeAutoAction(nodeIndex: NodeIndex): Promise<OnActionState | void> {
+    //     const node = nodeIndex.node;
+    //     for (const actionIndex of nodeIndex.nextActions) {
+    //         const action = node.nextActions.find(element => element.id === actionIndex.id);
+    //         if (action?.mode === ActionMode.AUTO) {
+    //             return this.onNextAction(nodeIndex, actionIndex, action);// action.onAction!.call(node, action);
+    //         }
+    //     }
+    //     return Promise.resolve();
 
         // const actionIndex = node.nextActions.find(element => element.mode === ActionMode.AUTO);
         // if (actionIndex) {
         //     return this.onAction(node.index, actionIndex.id);
         // }
         // return Promise.resolve();
-    }
+    // }
 
-    protected async onNextAction(nodeIndex: NodeIndex, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<OnActionState> {
-        nodeIndex.state = NodeState.PASSED;
-        const actionResult = await nodeIndex.node.onNextAction() action.onAction.call(nodeIndex, action, data);
-        if (actionResult.onState === OnActionState.DISMISS) {
-            actionIndex.nextNodes.forEach(async nextIndex => {
-                const nextNode = this.findNodeIndex(nextIndex);
-                if (nextNode) {
-                    nextNode.state = NodeState.ACTIVED;
-                    await nextNode.node.onPrevAction.call(nodeIndex, action, actionResult.data);
-                }
+    // protected async onNextAction(nodeIndex: NodeIndex, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<OnActionState> {
+    //     nodeIndex.state = NodeState.PASSED;
+    //     const actionResult = await nodeIndex.node.onNextAction() action.onAction.call(nodeIndex, action, data);
+    //     if (actionResult.onState === OnActionState.DISMISS) {
+    //         actionIndex.nextNodes.forEach(async nextIndex => {
+    //             const nextNode = this.findNodeIndex(nextIndex);
+    //             if (nextNode) {
+    //                 nextNode.state = NodeState.ACTIVED;
+    //                 await nextNode.node.onPrevAction.call(nodeIndex, action, actionResult.data);
+    //             }
 
-            });
-        }
-        throw new Error("Method not implemented.");
-    }
+    //         });
+    //     }
+    //     throw new Error("Method not implemented.");
+    // }
 
-    public async onAction(nodeIndex: number, actionId: string, data?: ActionData): Promise<OnActionState> { //ActionResult
-        Logger.debug(`[${nodeIndex}](${actionId}) is triggered.`);
-        Logger.debug('playload:\n', data);
+    // public async onAction(nodeIndex: number, actionId: string, data?: ActionData): Promise<OnActionState> { //ActionResult
+    //     Logger.debug(`[${nodeIndex}](${actionId}) is triggered.`);
+    //     Logger.debug('playload:\n', data);
 
-        const action = this.findActionIndex(nodeIndex, actionId);
-        action && (action!.state = ActionState.TRIGGERED);
+    //     const action = this.findActionIndex(nodeIndex, actionId);
+    //     action && (action!.state = ActionState.TRIGGERED);
 
-        Logger.debug(`[${nodeIndex}](${actionId}) is triggered.`);
-        Logger.debug('playload:\n', data);
+    //     Logger.debug(`[${nodeIndex}](${actionId}) is triggered.`);
+    //     Logger.debug('playload:\n', data);
         
 
-        const node = this.findNodeIndex(nodeIndex);
-        if (node) {
-            node.state = NodeState.PASSED;
-            const preRet = await node?.node.onNextAction(actionId, data);
-            if (preRet.onState === OnActionState.DISMISS) {
-                // const action = this.findActionIndex(nodeIndex, actionId);
-                action?.nextNodes.forEach(async node => {
-                    const nextNode = this.findNodeIndex(node);
-                    if (nextNode) {
-                        nextNode.state = NodeState.ACTIVED;
-                        await nextNode.node.onPrevAction(actionId, preRet.data);
-                        await this.checkNodeAutoAction(nextNode);
-                    }
-                });  
-            }
-            return preRet.onState;        
-        }
-        return OnActionState.DISMISS;
-    }
+    //     const node = this.findNodeIndex(nodeIndex);
+    //     if (node) {
+    //         node.state = NodeState.PASSED;
+    //         const preRet = await node?.node.onNextAction(actionId, data);
+    //         if (preRet.onState === OnActionState.DISMISS) {
+    //             // const action = this.findActionIndex(nodeIndex, actionId);
+    //             action?.nextNodes.forEach(async node => {
+    //                 const nextNode = this.findNodeIndex(node);
+    //                 if (nextNode) {
+    //                     nextNode.state = NodeState.ACTIVED;
+    //                     await nextNode.node.onPrevAction(actionId, preRet.data);
+    //                     await this.checkNodeAutoAction(nextNode);
+    //                 }
+    //             });  
+    //         }
+    //         return preRet.onState;        
+    //     }
+    //     return OnActionState.DISMISS;
+    // }
 }

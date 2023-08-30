@@ -22,13 +22,19 @@ type ActionCollection = {
 }
 
 export default class ActionFactory {
-    public static async loadCollection(): Promise<ActionCollection> {
-        const ret: ActionCollection = {};
+    private static actionCollection: ActionCollection = {};
+
+    public fetchAction(id: string): ActionBase | undefined {
+        return ActionFactory.actionCollection[id];
+    }
+
+    public static async loadCollection(): Promise<void> {
+        // const ret: ActionCollection = {};
         for (const file of ActionDefinitions) {
             const json = await ActionFactory.loadJSON(file);
-            ret[json.id] = new ActionBase(json.id, json.name, json.description);
+            ActionFactory.actionCollection[json.id] = new ActionBase(json.id, json.name, json.description);
         };
-        return ret;
+        // return ret;
     }
 
     private static loadJSON(index: string): Promise<any> {

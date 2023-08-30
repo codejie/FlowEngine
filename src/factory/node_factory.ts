@@ -25,8 +25,14 @@ type NodeCollection = {
 };
 
 export default class NodeFactory {
-    public static async loadCollection(): Promise<NodeCollection> {
-        const ret: NodeCollection = {};
+    private static nodeCollection: NodeCollection = {};
+
+    public static fetchNode(id: string): NodeBase | undefined {
+        return NodeFactory.nodeCollection[id];
+    }
+
+    public static async loadCollection(): Promise<void> {
+        // const ret: NodeCollection = {};
         for (const file of NodeDefinitions) {
             const json = await NodeFactory.loadJSON(file);
             const node = new NodeBase(json.id, json.name, json.description);
@@ -53,9 +59,9 @@ export default class NodeFactory {
             if (json.prevAction) {
                 node.prevAction = getOnPrevActionFunction(json.prevAction);
             }
-            ret[json.id] = node;
+            NodeFactory.nodeCollection[json.id] = node;
         }
-        return ret;
+        // return ret;
     }
 
     // public static async make(id: string): Promise<NodeBase> {       
