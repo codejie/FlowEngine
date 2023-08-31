@@ -1,4 +1,6 @@
 import Logger from "../logger";
+import { Action, ActionMode, NodeBase, OnActionState } from "./node_base";
+import NodeFactory from "./node_factory";
 
 enum NodeParameterFlag {
     REQUIRED = 'required',
@@ -93,6 +95,38 @@ export default class FlowBase {
     protected findNodeIndex(index: number): NodeIndex | undefined {
         return this.nodeIndexes.find(item => (item.index === index));
     }
+
+    public onStart(): Promise<OnActionState | void> {
+        const nodeIndex = this.nodeIndexes.find(item => item.id === 'NODE_START');
+        if (nodeIndex) {
+            return this.checkNodeAutoAction(nodeIndex);
+        }
+        return Promise.resolve();
+    }
+
+    public checkNodeAutoAction(nodeIndex: NodeIndex): Promise<void | OnActionState> {
+        if (nodeIndex.actions) {
+            const node = NodeFactory.fetchNode(nodeIndex.id);
+            if (node) {
+                for (const actionIndex of nodeIndex.actions) {
+                    const action = node.nextActions.find(item => (item.id === actionIndex.id && item.mode === ActionMode.AUTO));
+                    if (action) {
+                        return this.onNextAction(nodeIndex, node, actionIndex, action);
+                    }
+                }
+            }
+        }
+         return Promise.resolve();
+    }
+
+    protected onNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action): Promise<void | OnActionState> {
+        nodeIndex.state = NodeState.PASSED;
+        return action.onAction.call(this, nodeIndex, actionIndex);
+    }
+
+    public onNextAction(index: number, actionId: string) {
+        
+    } 
 
     public show(): void {
         function showNode(nodeIndex?: NodeIndex): string {
