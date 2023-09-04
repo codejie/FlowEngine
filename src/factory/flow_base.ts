@@ -35,7 +35,7 @@ export interface NodeIndex {
     index: number,
     id: string,
     paramsters?: NodeParameter[],
-    actions?: ActionIndex[],
+    actions: ActionIndex[],
 
     state?: NodeState
 }
@@ -111,7 +111,8 @@ export default class FlowBase {
                 for (const actionIndex of nodeIndex.actions) {
                     const action = node.nextActions.find(item => (item.id === actionIndex.id && item.mode === ActionMode.AUTO));
                     if (action) {
-                        return this.onNextAction(nodeIndex, node, actionIndex, action);
+                        // return this.onNextAction(nodeIndex, node, actionIndex, action);
+                        return this.onNodeNextAction(nodeIndex, node, actionIndex, action);
                     }
                 }
             }
@@ -119,14 +120,30 @@ export default class FlowBase {
          return Promise.resolve();
     }
 
-    protected onNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action): Promise<void | OnActionState> {
+    public onNextAction(index: number, actionId: string): Promise<void | OnActionState>  {
+        const nodeIndex = this.findNodeIndex(index);
+        if (nodeIndex) {
+            const actionIndex = nodeIndex.actions.find(item => item.id === actionId);
+            if (actionIndex) {
+                const node = NodeFactory.fetchNode(nodeIndex.id);
+                if (node) {
+                    const action = node.nextActions.find(item => item.id === actionIndex.id);
+                    if (action) {
+                        return this.onNodeNextAction(nodeIndex, node, actionIndex, action);
+                    }
+                }
+            }
+        }
+        return Promise.resolve();
+    }
+
+    protected onNodeNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action): Promise<void | OnActionState> {
         nodeIndex.state = NodeState.PASSED;
+        actionIndex.state = ActionState.TRIGGERED;
+        
         return action.onAction.call(this, nodeIndex, actionIndex);
     }
 
-    public onNextAction(index: number, actionId: string) {
-        
-    } 
 
     public show(): void {
         function showNode(nodeIndex?: NodeIndex): string {

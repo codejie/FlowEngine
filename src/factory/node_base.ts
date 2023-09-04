@@ -1,7 +1,7 @@
 import Logger from '../logger';
 import { OnNextActionFunction, OnPrevActionFunction } from './action_function_factory';
 
-export enum ParameterFlag {
+export enum OptionFlag {
     OPTIONAL = 'OPTIONAL',
     REQUIRED = 'REQUIRED'
 }
@@ -24,10 +24,10 @@ export interface ActionResult {
     data: ActionData    
 }
 
-export interface Parameter {
+export interface Option {
     name: string,
-    value: any,
-    flag?: ParameterFlag
+    type: string,
+    flag?: OptionFlag
 }
 
 export interface Action {
@@ -43,7 +43,7 @@ export class NodeBase {
     public name?: string;
     public description?: string;
 
-    public parameters: Parameter[] = [];
+    public options: Option[] = [];
     public nextActions: Action[] = [];
     public prevAction?: OnPrevActionFunction;
 
@@ -61,8 +61,8 @@ export class NodeBase {
         return Promise.resolve(0);// task id
     }
 
-    public addParameter(param: Parameter): void {
-        this.parameters.push(param);
+    public addOption(option: Option): void {
+        this.options.push(option);
     }
 
     public addNextAction(action: Action): void {

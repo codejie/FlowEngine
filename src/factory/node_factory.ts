@@ -1,5 +1,5 @@
 import { readFile } from "fs";
-import { ActionMode, NodeBase, OnActionState } from "./node_base";
+import { ActionMode, NodeBase, OnActionState, OptionFlag } from "./node_base";
 import { getOnNextActionFunction, getOnPrevActionFunction } from "./action_function_factory";
 
 const NODE_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/nodes/";
@@ -36,12 +36,12 @@ export default class NodeFactory {
         for (const file of NodeDefinitions) {
             const json = await NodeFactory.loadJSON(file);
             const node = new NodeBase(json.id, json.name, json.description);
-            if (json.parameters) {
-                json.parameters.forEach((item: any) => {
-                    node.addParameter({
+            if (json.options) {
+                json.options.forEach((item: any) => {
+                    node.addOption({
                         name: item.name,
-                        value: item.value,
-                        flag: item.flag
+                        type: item.type,
+                        flag: item.flag || OptionFlag.OPTIONAL
                     });
                 });
             }

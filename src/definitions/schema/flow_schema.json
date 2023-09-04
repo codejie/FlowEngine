@@ -35,11 +35,7 @@
                                 },
                                 "value": {
                                     "type": "[string | number | boolean | object | array | null]"
-                                },
-                                "flag": {
-                                    "type": "string",
-                                    "enum": ["REQUIRED", "OPTIONAL"]
-                                }                                
+                                }               
                             },
                             "required": ["name", "value"]
                         }

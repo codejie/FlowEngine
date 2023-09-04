@@ -22,14 +22,16 @@
                     "name": {
                         "type": "string"
                     },
-                    "value": {
-                        "type": ["string", "number", "boolean", "object", "array", "null"]
+                    "type": {
+                        "type": "string",
+                        "enum": ["string", "number", "boolean", "object", "array", "null"]
                     },
                     "flag": { 
                         "type": "string",
                         "enum": ["OPTIONAL", "REQUIRED"]
                     }
-                }
+                },
+                "required": ["name"]
             }
         },
         "nextActions": {
