@@ -1,5 +1,5 @@
 import Logger from "../logger";
-import { Action, ActionMode, NodeBase, OnActionState } from "./node_base";
+import { Action, ActionData, ActionMode, NodeBase, OnActionState } from "./node_base";
 import NodeFactory from "./node_factory";
 
 enum NodeParameterFlag {
@@ -18,7 +18,7 @@ enum ActionState {
     TRIGGERED = 1
 }
 
-interface ActionIndex {
+export interface ActionIndex {
     id: string,
     nextNodes: number[],
 
@@ -105,7 +105,7 @@ export default class FlowBase {
     }
 
     public checkNodeAutoAction(nodeIndex: NodeIndex): Promise<void | OnActionState> {
-        if (nodeIndex.actions) {
+        if (nodeIndex.actions.length > 0) {
             const node = NodeFactory.fetchNode(nodeIndex.id);
             if (node) {
                 for (const actionIndex of nodeIndex.actions) {
@@ -120,7 +120,7 @@ export default class FlowBase {
          return Promise.resolve();
     }
 
-    public onNextAction(index: number, actionId: string): Promise<void | OnActionState>  {
+    public onNextAction(index: number, actionId: string, data?: ActionData): Promise<void | OnActionState>  {
         const nodeIndex = this.findNodeIndex(index);
         if (nodeIndex) {
             const actionIndex = nodeIndex.actions.find(item => item.id === actionId);
@@ -137,11 +137,39 @@ export default class FlowBase {
         return Promise.resolve();
     }
 
-    protected onNodeNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action): Promise<void | OnActionState> {
+    protected async onNodePrevAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<number> {
+        if (node.onPrevAction) {
+            await node.onPrevAction(nodeIndex, node, actionIndex, action);
+        }
+        await this.checkNodeAutoAction(nodeIndex);
+
+        return await this.createTask();
+    }
+
+    protected async onNodeNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<void | OnActionState> {
         nodeIndex.state = NodeState.PASSED;
         actionIndex.state = ActionState.TRIGGERED;
         
-        return action.onAction.call(this, nodeIndex, actionIndex);
+        const ret = await action.onAction.call(this, nodeIndex, actionIndex, data);
+        if (ret.onState === OnActionState.DISMISS) {
+            const allPrevActions: Promise<number>[] = [];
+            actionIndex.nextNodes.forEach(async index => {
+                const nextNodeIndex = this.findNodeIndex(index);
+                if (nextNodeIndex) {
+
+                    // nextNodeIndex.state = NodeState.ACTIVED;
+                    // const nextNode = NodeFactory.fetchNode(nextNodeIndex.id);
+                    // if (nextNode?.prevAction) {
+
+                    // }
+                    // allPrevActions.push(nextNode.onPrevAction?.call(this, nextNodeIndex, nextNode, actionIndex, action));
+                }
+            });
+            Promise.all(allPrevActions);
+
+            return Promise.resolve(ret.onState);
+        }
+        return Promise.resolve();
     }
 
 

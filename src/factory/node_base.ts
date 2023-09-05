@@ -45,7 +45,7 @@ export class NodeBase {
 
     public options: Option[] = [];
     public nextActions: Action[] = [];
-    public prevAction?: OnPrevActionFunction;
+    public onPrevAction?: OnPrevActionFunction;
 
     public constructor(id: string, name?: string, description?: string) {
         this.id = id;
@@ -88,10 +88,10 @@ export class NodeBase {
 
     // }
 
-    public onPrevAction(actionId: string, data?: ActionData): Promise<number> {
-        Logger.debug(`onPrevAction - [${this.id}](${actionId})`);
-        Logger.debug('data:\n', data);
+    // public onPrevAction(actionId: string, data?: ActionData): Promise<number> {
+    //     Logger.debug(`onPrevAction - [${this.id}](${actionId})`);
+    //     Logger.debug('data:\n', data);
 
-        return this.createTask(actionId, data);
-    }
+    //     return this.createTask(actionId, data);
+    // }
 }

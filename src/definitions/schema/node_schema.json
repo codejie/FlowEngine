@@ -60,7 +60,7 @@
                 "required": ["id"]
             }
         },
-        "prevAction": {
+        "onPrevAction": {
             "type": "string"
         }
     },

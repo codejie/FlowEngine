@@ -1,8 +1,11 @@
 import { prev_action_output } from "./action_functions/prev_action_output";
+import { NodeIndex, ActionIndex } from "./flow_base";
 import { ActionData, ActionResult, Action, OnActionState } from "./node_base";
 
-export type OnNextActionFunction = (action: Action, data?: ActionData) => Promise<ActionResult>;
+// export type OnNextActionFunction = (action: Action, data?: ActionData) => Promise<ActionResult>;
 export type OnPrevActionFunction = (action: Action, data?: ActionData) => Promise<number | void>;
+
+export type OnNextActionFunction = (nodeIndex: NodeIndex, actionIndex: ActionIndex, data?: ActionData) => Promise<ActionResult>;
 
 // function defaultOnNextActionFunction(action: Action, data?: ActionData):
 
