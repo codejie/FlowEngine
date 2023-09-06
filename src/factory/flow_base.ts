@@ -139,7 +139,7 @@ export default class FlowBase {
 
     protected async onNodePrevAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<number> {
         if (node.onPrevAction) {
-            await node.onPrevAction(nodeIndex, node, actionIndex, action);
+            await node.onPrevAction(this, nodeIndex, actionIndex, data);
         }
         await this.checkNodeAutoAction(nodeIndex);
 
@@ -150,7 +150,7 @@ export default class FlowBase {
         nodeIndex.state = NodeState.PASSED;
         actionIndex.state = ActionState.TRIGGERED;
         
-        const ret = await action.onAction.call(this, nodeIndex, actionIndex, data);
+        const ret = await action.onAction(this, nodeIndex, actionIndex, data);
         if (ret.onState === OnActionState.DISMISS) {
             const allPrevActions: Promise<number>[] = [];
             actionIndex.nextNodes.forEach(async index => {
@@ -170,6 +170,10 @@ export default class FlowBase {
             return Promise.resolve(ret.onState);
         }
         return Promise.resolve();
+    }
+
+    protected createTask(): Promise<number> {
+        return Promise.resolve(0);
     }
 
 

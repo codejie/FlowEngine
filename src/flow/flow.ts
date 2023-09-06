@@ -189,23 +189,23 @@ export default class Flow {
     //     Logger.debug('playload:\n', data);
         
 
-        const node = this.findNodeIndex(nodeIndex);
-        if (node) {
-            node.state = NodeState.PASSED;
-            const preRet = await node?.node.onNextAction(actionId, data);
-            if (preRet.onState === OnActionState.DISMISS) {
-                // const action = this.findActionIndex(nodeIndex, actionId);
-                action?.nextNodes.forEach(async node => {
-                    const nextNode = this.findNodeIndex(node);
-                    if (nextNode) {
-                        nextNode.state = NodeState.ACTIVED;
-                        await nextNode.node.onPrevAction(actionId, preRet.data);
-                        await this.checkNodeAutoAction(nextNode);
-                    }
-                });  
-            }
-            return preRet.onState;        
-        }
-        return OnActionState.DISMISS;
+        // const node = this.findNodeIndex(nodeIndex);
+        // if (node) {
+        //     node.state = NodeState.PASSED;
+        //     const preRet = await node?.node.onNextAction(actionId, data);
+        //     if (preRet.onState === OnActionState.DISMISS) {
+        //         // const action = this.findActionIndex(nodeIndex, actionId);
+        //         action?.nextNodes.forEach(async node => {
+        //             const nextNode = this.findNodeIndex(node);
+        //             if (nextNode) {
+        //                 nextNode.state = NodeState.ACTIVED;
+        //                 await nextNode.node.onPrevAction(actionId, preRet.data);
+        //                 await this.checkNodeAutoAction(nextNode);
+        //             }
+        //         });  
+        //     }
+        //     return preRet.onState;        
+        // }
+        // return OnActionState.DISMISS;
     // }
 }

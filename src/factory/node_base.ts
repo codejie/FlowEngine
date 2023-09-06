@@ -21,7 +21,7 @@ export type ActionData = any;
 
 export interface ActionResult {
     onState: OnActionState,
-    data: ActionData    
+    data?: ActionData    
 }
 
 export interface Option {
