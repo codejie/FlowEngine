@@ -34,4 +34,6 @@ export async function new_flow() {
 
     const flow: FlowBase = await FlowFactory.load('test.json');
     flow.show();
+    await flow.onStart();
+    flow.show();
 }

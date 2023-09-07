@@ -137,8 +137,10 @@ export default class FlowBase {
         return Promise.resolve();
     }
 
-    protected async onNodePrevAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<number> {
-        if (node.onPrevAction) {
+    protected async onNodePrevAction(nodeIndex: NodeIndex, actionIndex: ActionIndex, data?: ActionData): Promise<number> {
+        nodeIndex.state = NodeState.ACTIVED;
+        const node = NodeFactory.fetchNode(nodeIndex.id);
+        if (node && node.onPrevAction) {
             await node.onPrevAction(this, nodeIndex, actionIndex, data);
         }
         await this.checkNodeAutoAction(nodeIndex);
@@ -156,13 +158,7 @@ export default class FlowBase {
             actionIndex.nextNodes.forEach(async index => {
                 const nextNodeIndex = this.findNodeIndex(index);
                 if (nextNodeIndex) {
-
-                    // nextNodeIndex.state = NodeState.ACTIVED;
-                    // const nextNode = NodeFactory.fetchNode(nextNodeIndex.id);
-                    // if (nextNode?.prevAction) {
-
-                    // }
-                    // allPrevActions.push(nextNode.onPrevAction?.call(this, nextNodeIndex, nextNode, actionIndex, action));
+                    allPrevActions.push(this.onNodePrevAction(nextNodeIndex, actionIndex, ret.data));
                 }
             });
             Promise.all(allPrevActions);
