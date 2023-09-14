@@ -159,6 +159,7 @@ export default class FlowBase {
                 const nextNodeIndex = this.findNodeIndex(index);
                 if (nextNodeIndex) {
                     allPrevActions.push(this.onNodePrevAction(nextNodeIndex, actionIndex, ret.data));
+                    // await this.onNodePrevAction(nextNodeIndex, actionIndex, ret.data);
                 }
             });
             Promise.all(allPrevActions);
