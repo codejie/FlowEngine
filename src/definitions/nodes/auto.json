@@ -1,0 +1,11 @@
+{
+    "id": "NODE_AUTO",
+    "name": "AutoNode",
+    "description": "node with AUTO Action",
+    "nextActions": [
+        {
+            "id": "ACTION_AUTO",
+            "mode": "AUTO"
+        }
+    ]
+}
