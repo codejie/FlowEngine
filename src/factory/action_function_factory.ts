@@ -10,7 +10,8 @@ export type OnPrevActionFunction = (flow: FlowBase, nodeIndex: NodeIndex, action
 
 function defaultOnNextActionFunction(flow: FlowBase, nodeIndex: NodeIndex, actionIndex: ActionIndex, data?: ActionData): Promise<ActionResult> {
     return Promise.resolve({
-        onState: OnActionState.DISMISS
+        onState: OnActionState.DISMISS,
+        data: data
     });
 }
 

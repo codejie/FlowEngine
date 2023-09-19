@@ -17,7 +17,8 @@ const NodeDefinitions: string[] = [
     'start.json',
     'end.json',
     'input.json',
-    'output.json'
+    'output.json',
+    'auto.json'
 ];
 
 type NodeCollection = {

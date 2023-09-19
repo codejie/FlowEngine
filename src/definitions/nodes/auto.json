@@ -5,7 +5,10 @@
     "nextActions": [
         {
             "id": "ACTION_AUTO",
-            "mode": "AUTO"
+            "mode": "AUTO",
+            "payload": {
+                "data": "HELLO"
+            }
         }
     ]
 }

@@ -112,7 +112,7 @@ export default class FlowBase {
                     const action = node.nextActions.find(item => (item.id === actionIndex.id && item.mode === ActionMode.AUTO));
                     if (action) {
                         // return this.onNextAction(nodeIndex, node, actionIndex, action);
-                        return this.onNodeNextAction(nodeIndex, node, actionIndex, action);
+                        return this.onNodeNextAction(nodeIndex, node, actionIndex, action, action.payload);
                     }
                 }
             }
@@ -129,7 +129,7 @@ export default class FlowBase {
                 if (node) {
                     const action = node.nextActions.find(item => item.id === actionIndex.id);
                     if (action) {
-                        return this.onNodeNextAction(nodeIndex, node, actionIndex, action);
+                        return this.onNodeNextAction(nodeIndex, node, actionIndex, action, {...action.payload, ...data});
                     }
                 }
             }
@@ -140,6 +140,9 @@ export default class FlowBase {
     protected async onNodePrevAction(nodeIndex: NodeIndex, actionIndex: ActionIndex, data?: ActionData): Promise<number> {
         nodeIndex.state = NodeState.ACTIVED;
         const node = NodeFactory.fetchNode(nodeIndex.id);
+
+        Logger.debug('onNodePrevAction() - data: ', data);
+
         if (node && node.onPrevAction) {
             await node.onPrevAction(this, nodeIndex, actionIndex, data);
         }
@@ -151,6 +154,8 @@ export default class FlowBase {
     protected async onNodeNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<void | OnActionState> {
         nodeIndex.state = NodeState.PASSED;
         actionIndex.state = ActionState.TRIGGERED;
+
+        Logger.debug('onNodeNextAction() - data: ', data);
         
         const ret = await action.onAction(this, nodeIndex, actionIndex, data);
         if (ret.onState === OnActionState.DISMISS) {
