@@ -51,7 +51,7 @@ export default class NodeFactory {
                     node.addNextAction({
                         id: item.id,
                         mode: item.mode || ActionMode.NORMAL,
-                        onResult: item.OnActionState || OnActionState.DISMISS,
+                        onState: item.OnActionState || OnActionState.DISMISS,
                         payload: item.payload,
                         onAction: getOnNextActionFunction(item.onAction)
                     });

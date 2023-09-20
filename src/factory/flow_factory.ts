@@ -8,7 +8,7 @@ const FLOW_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/flo
 // ];
 
 export default class FlowFactory {
-    public static async load(file: string): Promise<FlowBase> {
+    public static async load(file: string, root: string = FLOW_DEFINITION_ROOT): Promise<FlowBase> {
         const json = await FlowFactory.loadJSON(file);
         const flow = new FlowBase(json.id, json.name, json.description);
         json.nodes?.forEach((item: any) => {

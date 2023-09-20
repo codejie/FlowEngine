@@ -1,5 +1,5 @@
 import Logger from "../logger";
-import { Action, ActionData, ActionMode, NodeBase, OnActionState } from "./node_base";
+import { NodeAction, ActionData, ActionMode, NodeBase, OnActionState } from "./node_base";
 import NodeFactory from "./node_factory";
 
 enum NodeParameterFlag {
@@ -144,20 +144,23 @@ export default class FlowBase {
         Logger.debug('onNodePrevAction() - data: ', data);
 
         if (node && node.onPrevAction) {
-            await node.onPrevAction(this, nodeIndex, actionIndex, data);
+            const action = node?.findNextAction(actionIndex.id);
+            if (action) {
+                await node.onPrevAction(this, nodeIndex, node, actionIndex, action, data);
+            }
         }
         await this.checkNodeAutoAction(nodeIndex);
 
         return await this.createTask();
     }
 
-    protected async onNodeNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: Action, data?: ActionData): Promise<void | OnActionState> {
+    protected async onNodeNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: NodeAction, data?: ActionData): Promise<void | OnActionState> {
         nodeIndex.state = NodeState.PASSED;
         actionIndex.state = ActionState.TRIGGERED;
 
         Logger.debug('onNodeNextAction() - data: ', data);
         
-        const ret = await action.onAction(this, nodeIndex, actionIndex, data);
+        const ret = await action.onAction(this, nodeIndex, node, actionIndex, action, data);
         if (ret.onState === OnActionState.DISMISS) {
             const allPrevActions: Promise<number>[] = [];
             actionIndex.nextNodes.forEach(async index => {

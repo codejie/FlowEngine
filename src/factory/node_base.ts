@@ -30,10 +30,10 @@ export interface Option {
     flag?: OptionFlag
 }
 
-export interface Action {
+export interface NodeAction { // NodeAction
     id: string,
     mode: ActionMode,
-    onResult: OnActionState,
+    onState: OnActionState,
     payload?: any,
     onAction: OnNextActionFunction
 }
@@ -44,7 +44,7 @@ export class NodeBase {
     public description?: string;
 
     public options: Option[] = [];
-    public nextActions: Action[] = [];
+    public nextActions: NodeAction[] = [];
     public onPrevAction?: OnPrevActionFunction;
 
     public constructor(id: string, name?: string, description?: string) {
@@ -53,7 +53,7 @@ export class NodeBase {
         this.description = description;
     }
 
-    protected findNextAction(id: string): Action | undefined {
+    public findNextAction(id: string): NodeAction | undefined {
         return this.nextActions.find(item => item.id === id);
     }
 
@@ -65,7 +65,7 @@ export class NodeBase {
         this.options.push(option);
     }
 
-    public addNextAction(action: Action): void {
+    public addNextAction(action: NodeAction): void {
         this.nextActions.push(action);
     }
 
