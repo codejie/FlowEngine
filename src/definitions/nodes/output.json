@@ -8,5 +8,5 @@
             "mode": "AUTO"
         }
     ],
-    "prevAction": "node_preaction_output"
+    "onPrevAction": "prev_action_output"
 }

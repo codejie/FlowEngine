@@ -58,7 +58,7 @@ export default class NodeFactory {
                 });
             }
             if (json.onPrevAction) {
-                node.onPrevAction = getOnPrevActionFunction(json.prevAction);
+                node.onPrevAction = getOnPrevActionFunction(json.onPrevAction);
             }
             NodeFactory.nodeCollection[json.id] = node;
         }

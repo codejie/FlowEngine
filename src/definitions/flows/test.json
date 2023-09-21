@@ -10,7 +10,8 @@
                 {
                     "id": "ACTION_AUTO",
                     "nextNodes": [
-                        3
+                        3,
+                        4
                     ]
                 }
             ]
@@ -26,9 +27,33 @@
                 {
                     "id": "ACTION_AUTO",
                     "nextNodes": [
-                        2
+                        5
                     ]
                 }
+            ]
+        },
+        {
+            "index": 4,
+            "id": "NODE_AUTO",
+            "actions": [
+                {
+                    "id": "ACTION_AUTO",
+                    "nextNodes": [
+                        5
+                    ]
+                }
+            ]
+        },
+        {
+            "index": 5,
+            "id": "NODE_OUTPUT",
+            "actions": [
+                {
+                    "id": "ACTION_OK",
+                    "nextNodes": [
+                        2
+                    ]
+                }                
             ]
         }
     ]

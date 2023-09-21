@@ -21,20 +21,20 @@ function defaultOnNextActionFunction(flow: FlowBase, nodeIndex: NodeIndex, node:
 }
 
 function defaultOnPrevActionFunction(flow: FlowBase, nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: NodeAction, data?: ActionData): Promise<number | void> {
-    Logger.debug()
+    // Logger.debug()
     return Promise.resolve();
 }
 
 const OnNextActionFunctionDefinitions: {
     [key in string]: OnNextActionFunction
 } = {
-
+    
 }
 
 const OnPrevActionFunctionDefinitions: {
     [key in string]: OnPrevActionFunction
 } = {
-    // "prev_action_output": prev_action_output
+    "prev_action_output": prev_action_output
 }
 
 export function getOnNextActionFunction(onAction: string): OnNextActionFunction {
