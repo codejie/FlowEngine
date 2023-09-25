@@ -14,6 +14,7 @@ export type OnPrevActionFunction = (flow: FlowBase, nodeIndex: NodeIndex, node: 
 
 
 function defaultOnNextActionFunction(flow: FlowBase, nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: NodeAction, data?: ActionData): Promise<ActionResult> {
+    Logger.debug(`defaultOnNextActionFunction() - [${node.id}:${action.id}] -`, data);
     return Promise.resolve({
         onState: action.onState || OnActionState.DISMISS,
         data: data
@@ -21,7 +22,7 @@ function defaultOnNextActionFunction(flow: FlowBase, nodeIndex: NodeIndex, node:
 }
 
 function defaultOnPrevActionFunction(flow: FlowBase, nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: NodeAction, data?: ActionData): Promise<number | void> {
-    // Logger.debug()
+    Logger.debug(`defaultOnPrevActionFunction() - [${node.id}:${action.id}] -`, data);
     return Promise.resolve();
 }
 

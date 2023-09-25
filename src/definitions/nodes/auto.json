@@ -10,5 +10,6 @@
                 "data": "HELLO"
             }
         }
-    ]
+    ],
+    "onPrevAction": "prev_action_output"
 }
