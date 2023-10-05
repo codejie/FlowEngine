@@ -1,4 +1,5 @@
 import Logger from "../logger";
+import ActionFactory from "./action_factory";
 import { NodeAction, ActionData, ActionMode, NodeBase, OnActionState } from "./node_base";
 import NodeFactory from "./node_factory";
 
@@ -27,8 +28,8 @@ export interface ActionIndex {
 
 enum NodeState {
     INIT = 0,
-    PASSED = 1,
-    ACTIVED = 2
+    PASSED = 2,
+    ACTIVED = 1
 }
 
 export interface NodeIndex {
@@ -111,7 +112,6 @@ export default class FlowBase {
                 for (const actionIndex of nodeIndex.actions) {
                     const action = node.nextActions.find(item => (item.id === actionIndex.id && item.mode === ActionMode.AUTO));
                     if (action) {
-                        // return this.onNextAction(nodeIndex, node, actionIndex, action);
                         return this.onNodeNextAction(nodeIndex, node, actionIndex, action, action.payload);
                     }
                 }
@@ -137,18 +137,18 @@ export default class FlowBase {
         return Promise.resolve();
     }
 
-    protected async onNodePrevAction(nodeIndex: NodeIndex, actionIndex: ActionIndex, data?: ActionData): Promise<number> {
+    protected async onNodePrevAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: NodeAction, data?: ActionData): Promise<number> {
         nodeIndex.state = NodeState.ACTIVED;
-        const node = NodeFactory.fetchNode(nodeIndex.id);
+        // const node = NodeFactory.fetchNode(nodeIndex.id);
 
-        Logger.debug('onNodePrevAction() - data: ', data);
+        // Logger.error('onNodePrevAction() - [%s] - [%o] - [%d]', nodeIndex.id, data, nodeIndex.state);
 
-        if (node && node.onPrevAction) {
-            const action = node?.findNextAction(actionIndex.id);
-            if (action) {
-                await node.onPrevAction(this, nodeIndex, node, actionIndex, action, data);
-            }
-        }
+        // if (node && node.onPrevAction) {
+        //     const action = node?.findNextAction(actionIndex.id);
+        //     if (action) {
+        await node.onPrevAction!(this, nodeIndex, node, actionIndex, action, data);
+            // }
+        // }
         await this.checkNodeAutoAction(nodeIndex);
 
         return await this.createTask();
@@ -158,7 +158,7 @@ export default class FlowBase {
         nodeIndex.state = NodeState.PASSED;
         actionIndex.state = ActionState.TRIGGERED;
 
-        Logger.debug('onNodeNextAction() - data: ', data);
+        // Logger.debug('onNodeNextAction() - data: ', data);
         
         const ret = await action.onAction(this, nodeIndex, node, actionIndex, action, data);
         if (ret.onState === OnActionState.DISMISS) {
@@ -166,11 +166,12 @@ export default class FlowBase {
             actionIndex.nextNodes.forEach(async index => {
                 const nextNodeIndex = this.findNodeIndex(index);
                 if (nextNodeIndex) {
-                    allPrevActions.push(this.onNodePrevAction(nextNodeIndex, actionIndex, ret.data));
+                    const nextNode = NodeFactory.fetchNode(nextNodeIndex.id);
+                    allPrevActions.push(this.onNodePrevAction(nextNodeIndex, nextNode, actionIndex, action, ret.data));
                     // await this.onNodePrevAction(nextNodeIndex, actionIndex, ret.data);
                 }
             });
-            Promise.all(allPrevActions);
+            await Promise.all(allPrevActions);
 
             return Promise.resolve(ret.onState);
         }
@@ -193,6 +194,8 @@ export default class FlowBase {
         function showAction(prev: NodeIndex, action: ActionIndex, next?: NodeIndex): string {
              return `${showNode(prev)}<-(${action.id}@${action.state})->${showNode(next)}`;
         }
+        // flow
+        Logger.info('Flow:', this.description);
         // nodes
         Logger.info('Nodes:');
         this.nodeIndexes.forEach(node => {

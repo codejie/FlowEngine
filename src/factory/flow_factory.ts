@@ -1,7 +1,7 @@
 import { readFile } from "fs";
 import FlowBase, { NodeIndex } from "./flow_base";
 
-const FLOW_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/flows/";
+const FLOW_DEFINITION_ROOT = "../FlowEngine/src/definitions/flows/";
 
 // const FlowDefinitions: string[] = [
 //     'test.json'

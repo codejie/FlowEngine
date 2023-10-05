@@ -1,7 +1,7 @@
 {
     "id": "FLOW_TEST",
     "name": "TestFlow",
-    "description": "the minium flow for testing",
+    "description": "START->AUTO->END:the minium flow for testing",
     "nodes": [
         {
             "index": 1,

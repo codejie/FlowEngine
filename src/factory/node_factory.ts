@@ -2,7 +2,7 @@ import { readFile } from "fs";
 import { ActionMode, NodeBase, OnActionState, OptionFlag } from "./node_base";
 import { getOnNextActionFunction, getOnPrevActionFunction } from "./action_function_factory";
 
-const NODE_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/nodes/";
+const NODE_DEFINITION_ROOT = "../FlowEngine/src/definitions/nodes/";
 
 // const NodeDefinitions: {
 //     [key in string]: string
@@ -28,7 +28,7 @@ type NodeCollection = {
 export default class NodeFactory {
     private static nodeCollection: NodeCollection = {};
 
-    public static fetchNode(id: string): NodeBase | undefined {
+    public static fetchNode(id: string): NodeBase {
         return NodeFactory.nodeCollection[id];
     }
 
@@ -57,9 +57,9 @@ export default class NodeFactory {
                     });
                 });
             }
-            if (json.onPrevAction) {
-                node.onPrevAction = getOnPrevActionFunction(json.onPrevAction);
-            }
+            // if (json.onPrevAction) {
+            node.onPrevAction = getOnPrevActionFunction(json.onPrevAction);
+            // }
             NodeFactory.nodeCollection[json.id] = node;
         }
         // return ret;

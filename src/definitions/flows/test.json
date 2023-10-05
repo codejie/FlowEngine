@@ -1,7 +1,7 @@
 {
     "id": "FLOW_TEST",
     "name": "TestFlow",
-    "description": "the flow for testing",
+    "description": "START->[AUTO,AUTO]->OUTPUT->END,the flow for testing",
     "nodes": [
         {
             "index": 1,

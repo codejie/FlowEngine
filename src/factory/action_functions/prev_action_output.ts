@@ -3,7 +3,7 @@ import Logger from '../../logger';
 import FlowBase, { NodeIndex, ActionIndex } from "../flow_base";
 
 export function prev_action_output(flow: FlowBase, nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: NodeAction, data?: ActionData): Promise<number | void> {
-    Logger.debug(`prev_action_output:[${node.id}] - ${data}`);
+    Logger.debug('prev_action_output:[%s] - [%o]', node.id, data);
 
     return Promise.resolve()
 }

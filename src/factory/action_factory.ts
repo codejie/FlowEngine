@@ -2,7 +2,7 @@ import { readFile } from "fs";
 import { ActionBase } from "./action_base";
 import Logger from "../logger";
 
-const ACTION_DEFINITION_ROOT = "/Users/Jie/Code/git/FlowEngine/src/definitions/actions/";
+const ACTION_DEFINITION_ROOT = "../FlowEngine/src/definitions/actions/";
 // const ActionDefinitions: {
 //     [key in string]: string
 // } = {
@@ -24,7 +24,7 @@ type ActionCollection = {
 export default class ActionFactory {
     private static actionCollection: ActionCollection = {};
 
-    public fetchAction(id: string): ActionBase | undefined {
+    public static fetchAction(id: string): ActionBase | undefined {
         return ActionFactory.actionCollection[id];
     }
 
