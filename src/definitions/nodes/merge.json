@@ -1,0 +1,19 @@
+{
+    "id": "NODE_MERGE",
+    "name": "MergeNode",
+    "description": "waiting until two actions both arrived.", 
+    "options": [
+        {
+            "name": "actionCount",
+            "default": 0,
+            "type": "number",
+            "flag": "required"
+        }
+    ],
+    "nextActions": [
+        {
+            "id": "ACTION_OK"
+        }
+    ],
+    "onPrevAction": "prev_action_merge"
+}

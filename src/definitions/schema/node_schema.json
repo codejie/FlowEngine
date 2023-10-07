@@ -26,6 +26,9 @@
                         "type": "string",
                         "enum": ["string", "number", "boolean", "object", "array", "null"]
                     },
+                    "default": {
+                        "type": "any"
+                    },
                     "flag": { 
                         "type": "string",
                         "enum": ["OPTIONAL", "REQUIRED"]

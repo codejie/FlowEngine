@@ -1,4 +1,5 @@
 import Logger from "../logger"
+import { prev_action_merge } from "./action_functions/prev_action_merge";
 import { prev_action_output } from "./action_functions/prev_action_output";
 import FlowBase, { NodeIndex, ActionIndex } from "./flow_base";
 import { ActionData, ActionResult, NodeBase, NodeAction, OnActionState } from "./node_base";
@@ -35,7 +36,8 @@ const OnNextActionFunctionDefinitions: {
 const OnPrevActionFunctionDefinitions: {
     [key in string]: OnPrevActionFunction
 } = {
-    "prev_action_output": prev_action_output
+    "prev_action_output": prev_action_output,
+    "prev_action_merge": prev_action_merge
 }
 
 export function getOnNextActionFunction(onAction: string): OnNextActionFunction {

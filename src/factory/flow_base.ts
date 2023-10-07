@@ -110,7 +110,7 @@ export default class FlowBase {
             const node = NodeFactory.fetchNode(nodeIndex.id);
             if (node) {
                 for (const actionIndex of nodeIndex.actions) {
-                    const action = node.nextActions.find(item => (item.id === actionIndex.id && item.mode === ActionMode.AUTO));
+                    const action = node.nextActions.find(item => (item.id === actionIndex.id && (item.mode === ActionMode.AUTO || item.mode == ActionMode.TRIGGER || item.mode == ActionMode.INSTANT)));
                     if (action) {
                         return this.onNodeNextAction(nodeIndex, node, actionIndex, action, action.payload);
                     }
@@ -157,6 +157,11 @@ export default class FlowBase {
     protected async onNodeNextAction(nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: NodeAction, data?: ActionData): Promise<void | OnActionState> {
         nodeIndex.state = NodeState.PASSED;
         actionIndex.state = ActionState.TRIGGERED;
+
+        if (action.mode == ActionMode.TRIGGER)
+            action.mode = ActionMode.NORMAL;
+        else if (action.mode == ActionMode.INSTANT)
+            action.mode = ActionMode.DELAY;
 
         // Logger.debug('onNodeNextAction() - data: ', data);
         

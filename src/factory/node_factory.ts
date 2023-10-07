@@ -18,7 +18,8 @@ const NodeDefinitions: string[] = [
     'end.json',
     'input.json',
     'output.json',
-    'auto.json'
+    'auto.json',
+    'merge.json'
 ];
 
 type NodeCollection = {
@@ -42,6 +43,7 @@ export default class NodeFactory {
                     node.addOption({
                         name: item.name,
                         type: item.type,
+                        default: item.default,
                         flag: item.flag || OptionFlag.OPTIONAL
                     });
                 });

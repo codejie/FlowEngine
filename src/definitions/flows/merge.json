@@ -1,0 +1,60 @@
+{
+    "id": "FLOW_MERGE",
+    "name": "MergeFlow",
+    "description": "START->[AUTO,AUTO]->MERGE->END,the flow for testing",
+    "nodes": [
+        {
+            "index": 1,
+            "id": "NODE_START",
+            "actions": [
+                {
+                    "id": "ACTION_AUTO",
+                    "nextNodes": [
+                        3,
+                        4
+                    ]
+                }
+            ]
+        },
+        {
+            "index": 2,
+            "id": "NODE_END"
+        },
+        {
+            "index": 3,
+            "id": "NODE_AUTO",
+            "actions": [
+                {
+                    "id": "ACTION_AUTO",
+                    "nextNodes": [
+                        5
+                    ]
+                }
+            ]
+        },
+        {
+            "index": 4,
+            "id": "NODE_AUTO",
+            "actions": [
+                {
+                    "id": "ACTION_AUTO",
+                    "nextNodes": [
+                        5
+                    ]
+                }
+            ]
+        },
+        {
+            "index": 5,
+            "id": "NODE_MERGE",
+            "actions": [
+                {
+                    "id": "ACTION_OK",
+                    "nextNodes": [
+                        2
+                    ]
+                }                
+            ]
+        }
+    ]
+}

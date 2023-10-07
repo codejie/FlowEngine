@@ -9,7 +9,9 @@ export enum OptionFlag {
 export enum ActionMode {
     NORMAL = 'NORMAL',
     AUTO = 'AUTO',
-    DELAY = 'DELAY'
+    DELAY = 'DELAY',
+    TRIGGER = 'TRIGGER', // from NORMAL to AUTO
+    INSTANT = 'INSTANT' // from DELAY to AUTO
 }
 
 export enum OnActionState {
@@ -27,7 +29,12 @@ export interface ActionResult {
 export interface Option {
     name: string,
     type: string,
+    default?: any,
     flag?: OptionFlag
+}
+
+type Options = {
+    [key in string]: any
 }
 
 export interface NodeAction { // NodeAction
@@ -43,7 +50,7 @@ export class NodeBase {
     public name?: string;
     public description?: string;
 
-    public options: Option[] = [];
+    public options: Options = {};
     public nextActions: NodeAction[] = [];
     public onPrevAction?: OnPrevActionFunction;
 
@@ -62,7 +69,8 @@ export class NodeBase {
     }
 
     public addOption(option: Option): void {
-        this.options.push(option);
+        // this.options.push(option);
+        this.options[option.name] = option.default;
     }
 
     public addNextAction(action: NodeAction): void {
