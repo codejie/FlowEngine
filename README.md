@@ -1,7 +1,7 @@
 # FlowEngine
 This is a sample project to study how to make a Flow Engine.
 # Elements in Project
-There are three core elements in FlowEngine project: Node, Action and Flow. 
+There are three core elements in FlowEngine project: Flow, Node, and Action. 
 ## Flow
 ![Flow Image](./readme/flow_image.png)
 As above picture, one Flow is contain of two or more Nodes and one or more Actions. And the flow should be began with a StartNode, then ended with a EndNode.
@@ -65,7 +65,7 @@ This section is used to declare next nodes of the `nextAction` of the Node.
 
 If a `nextAction`'s ID of Node did not appear, means the brance of this action is not in the Flow.
 
->Refrence to [Flow JSON Schema](./src/definitions/schema/flow_schema.json) to detail.
+>Refrence to [Flow JSON Schema](./FlowEngine/blob/master/src/definitions/schema/flow_schema.json) to detail.
 ## Node
 Element Node has main three attributes: options, onPrevAction and nextActions.
 ![Node Image](./readme/node_image.png)
@@ -102,7 +102,6 @@ Element Node has main three attributes: options, onPrevAction and nextActions.
     }
 ```
 - nextActions: it indicates how many actions be supported by Node. All actions must be declared in Action collection firstly, in Node just be referenced from the collection by `Action's ID`. 
-<br>
 ```json
     "nextActions": {
         "type": "array",
@@ -146,16 +145,22 @@ In `nextAction` of Node Schema, it declares an Action (index by `ID`) how to be 
 
 **onAction**: action's callback function while triggerred, would be assigned to default function while not defined.
 
->Refrence to [Node JSON Schema](./src/definitions/schema/node_schema.json) to detail.
+>Refrence to [Node JSON Schema](./FlowEngine/blob/master/src/definitions/schema/
+node_schema.json) to detail.
+
+The base Node, Start and End have defined in the project, and be able to use them.
 ## Action
 Action is the simplest element in project currently, it only includes three basic attributes: `ID`, `Name` and `Description`.
->Refrence to [Action JSON Schema](./src/definitions/schema/action_schema.json) to detail.
+>Refrence to [Action JSON Schema](./FlowEngine/blob/master/src/definitions/schema/action_schema.json) to detail.
 
 # How to
 
+To make a flow, please try the follow steps.
+- make all actions
+- make other nodes, such as Auto or Input, and bind the specified actions
+- make a flow, import some required nodes, and make the relationship between them with thire nextActions field
+- well, you got one flow
 
-```ts
-function defaultOnPrevActionFunction(flow: FlowBase, nodeIndex: NodeIndex, node: NodeBase, actionIndex: ActionIndex, action: NodeAction, data?: ActionData): Promise<number | void> {
-    return Promise.resolve();
-}
-```
+
+# Last Section
+This is just a practice project to learn how to make flow engine, be careful. :)
