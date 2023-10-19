@@ -155,11 +155,22 @@ Action is the simplest element in project currently, it only includes three basi
 
 # How to
 
+## Make a Flow
 To make a flow, please try the follow steps.
-- make all actions
-- make other nodes, such as Auto or Input, and bind the specified actions
-- make a flow, import some required nodes, and make the relationship between them with thire nextActions field
+- make all actions, and register them into action factory
+- make other nodes, such as Auto or Input, and bind the specified actions, then register them into node factory in the same way
+- make a flow, import some required nodes, and make the relationship between them with thire nextActions field, and register
 - well, you got one flow
+
+## Call a Flow
+Follow the below lines
+```ts
+    const flow: FlowBase = await FlowFactory.load('input.json');
+    flow.show();
+    await flow.onStart();
+    await flow.onNextAction(3, 'ACTION_OK', {'a': 123});
+    flow.show();
+```
 
 
 # Last Section

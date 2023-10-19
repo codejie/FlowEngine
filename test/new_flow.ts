@@ -32,9 +32,10 @@ export async function new_flow() {
     // await flow.onAction(inputIndex, 'ACTION_OK', {'value': 'hello'});
     // flow.show();
 
-    const flow: FlowBase = await FlowFactory.load('merge.json');
+    const flow: FlowBase = await FlowFactory.load('input.json');
     flow.show();
     await flow.onStart();
+    await flow.onNextAction(3, 'ACTION_OK', {'a': 123});
     // await flow.onNextAction(5, 'ACTION_OK', {"a": 111});
     flow.show();
 }

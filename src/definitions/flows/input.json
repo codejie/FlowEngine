@@ -1,0 +1,35 @@
+{
+    "id": "FLOW_INPUT",
+    "name": "InputFlow",
+    "description": "START->INPUT->END:the flow with input node",
+    "nodes": [
+        {
+            "index": 1,
+            "id": "NODE_START",
+            "actions": [
+                {
+                    "id": "ACTION_AUTO",
+                    "nextNodes": [
+                        3
+                    ]
+                }
+            ]
+        },
+        {
+            "index": 2,
+            "id": "NODE_END"
+        },
+        {
+            "index": 3,
+            "id": "NODE_INPUT",
+            "actions": [
+                {
+                    "id": "ACTION_OK",
+                    "nextNodes": [
+                        2
+                    ]
+                }
+            ]
+        }
+    ]
+}
